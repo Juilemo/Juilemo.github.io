@@ -1,0 +1,815 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/dola.jpg">
+  <link rel="icon" href="/images/dola.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Robin">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="3D Gesture Particle System - Fast &amp; Fluid                                             body { margin: 0; overflow: hidden; background-color: #000; font-family: &#39;Microsoft YaHei&#39;, sans-">
+<meta property="og:type" content="website">
+<meta property="og:title" content="page.title">
+<meta property="og:url" content="http://juilemo.github.io/mylove/index.html">
+<meta property="og:site_name" content="Juilemo&#39;s blog">
+<meta property="og:description" content="3D Gesture Particle System - Fast &amp; Fluid                                             body { margin: 0; overflow: hidden; background-color: #000; font-family: &#39;Microsoft YaHei&#39;, sans-">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-08T14:06:03.687Z">
+<meta property="article:modified_time" content="2025-12-08T14:05:19.059Z">
+<meta property="article:author" content="Robin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>page.title - Juilemo&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"juilemo.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', '');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Juilemo&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="page.title"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Gesture Particle System - Fast & Fluid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Microsoft YaHei', sans-serif; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        .camera-preview {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 240px;
+            height: 180px;
+            z-index: 10;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 105, 180, 0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            background: #111;
+            transform: scaleX(-1);
+        }
+        
+        .camera-preview video { width: 100%; height: 100%; object-fit: cover; }
+
+        #status-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            color: white;
+            pointer-events: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
+        }
+
+        .heart-beat { animation: heartbeat 1.5s infinite; }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: #ff69b4; }
+            100% { transform: scale(1); }
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ff69b4;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loading-overlay">
+        <div class="text-3xl font-bold mb-4 heart-beat">正在初始化极速粒子系统...</div>
+        <div class="text-sm opacity-70">需要摄像头权限 | 请允许访问</div>
+    </div>
+
+    <div id="status-panel">
+        <h1 class="text-3xl font-bold mb-2 tracking-wider">粒子交互系统</h1>
+        <div class="space-y-1 text-sm opacity-90 font-mono">
+            <p>当前模式: <span id="gesture-text" class="text-cyan-400 font-bold text-xl transition-all duration-300"></span></p>
+            <p>状态: <span id="hand-state" class="text-yellow-400 font-bold">等待手势...</span></p>
+        </div>
+        <div class="mt-4 p-2 bg-gray-900 bg-opacity-50 rounded text-xs text-gray-300 max-w-xs">
+            <p class="font-bold text-white mb-1">指令列表:</p>
+            <ul class="list-disc pl-4 space-y-1">
+                <li>👆 单手 1/2/3 指: 切换数字</li>
+                <li>✊ 握拳: 粒子聚拢 / 🖐 张开: 粒子扩散</li>
+                <li>🫶 双手靠近(比心): 显示隐藏文字</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="camera-preview">
+        <video id="input-video"></video>
+    </div>
+
+    <div id="canvas-container"></div>
+
+<script>
+// --- 配置参数 ---
+const PARTICLE_COUNT = 8000; 
+const PARTICLE_SIZE = 0.35;   // 略微调小，视觉更精致
+const REACTION_SPEED = 0.25; // 大幅提升响应速度 (原0.12)
+
+// --- 全局变量 ---
+let scene, camera, renderer, particles, geometry;
+let currentPositions, targetPositions;
+let shapes = {}; 
+let currentShape = 'sphere';
+let contractionFactor = 0; // 0 = 扩散, 1 = 收缩
+
+const videoElement = document.getElementById('input-video');
+const gestureText = document.getElementById('gesture-text');
+const handStateText = document.getElementById('hand-state');
+const loadingScreen = document.getElementById('loading');
+
+// --- 1. 形状生成器 ---
+
+function createTextPoints(text, options = {}) {
+    const fontSize = options.fontSize || 180;
+    const fontName = options.fontName || 'Arial';
+    const canvasWidth = options.width || 256;
+    const canvasHeight = options.height || 256;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = 'white';
+    ctx.font = `bold ${fontSize}px ${fontName}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    ctx.fillText(text, canvasWidth / 2, canvasHeight / 2);
+
+    const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const data = imageData.data;
+    const points = [];
+    
+    const step = 2; 
+    
+    for (let y = 0; y < canvasHeight; y += step) {
+        for (let x = 0; x < canvasWidth; x += step) {
+            const index = (y * canvasWidth + x) * 4;
+            if (data[index] > 128) {
+                points.push({
+                    x: (x - canvasWidth / 2) * 0.08,
+                    y: -(y - canvasHeight / 2) * 0.08,
+                    z: 0
+                });
+            }
+        }
+    }
+    return points;
+}
+
+function createSpherePoints(count, radius) {
+    const points = [];
+    // 创建一个体积云，而不仅仅是表面，这样看起来更像"散开"
+    for (let i = 0; i < count; i++) {
+        const r = radius * Math.cbrt(Math.random()); // 均匀填充球体体积
+        const u = Math.random();
+        const v = Math.random();
+        const theta = 2 * Math.PI * u;
+        const phi = Math.acos(2 * v - 1);
+        points.push({
+            x: r * Math.sin(phi) * Math.cos(theta),
+            y: r * Math.sin(phi) * Math.sin(theta),
+            z: r * Math.cos(phi)
+        });
+    }
+    return points;
+}
+
+function initShapes() {
+    shapes['1'] = createTextPoints('1');
+    shapes['2'] = createTextPoints('2');
+    shapes['3'] = createTextPoints('3');
+    
+    shapes['love'] = createTextPoints('我爱你，特特', {
+        width: 800, 
+        height: 200, 
+        fontSize: 100, 
+        fontName: 'Microsoft YaHei'
+    });
+
+    // 增加散开时的范围，设为 12
+    shapes['sphere'] = createSpherePoints(PARTICLE_COUNT, 12);
+    
+    console.log("Shapes loaded. Love points:", shapes['love'].length);
+}
+
+// --- 2. Three.js 初始化 ---
+
+function initThree() {
+    const container = document.getElementById('canvas-container');
+
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.02);
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 25;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+    container.appendChild(renderer.domElement);
+
+    geometry = new THREE.BufferGeometry();
+    currentPositions = new Float32Array(PARTICLE_COUNT * 3);
+    targetPositions = new Float32Array(PARTICLE_COUNT * 3);
+
+    for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
+        currentPositions[i] = (Math.random() - 0.5) * 80;
+        targetPositions[i] = (Math.random() - 0.5) * 20;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(currentPositions, 3));
+
+    const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png');
+
+    const material = new THREE.PointsMaterial({
+        color: 0x00ffff,
+        size: PARTICLE_SIZE,
+        map: sprite,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+}
+
+function updateTargetPositions() {
+    const targetShapePoints = shapes[currentShape] || shapes['sphere'];
+    const spherePoints = shapes['sphere'];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        let p;
+        if (i < targetShapePoints.length) {
+            p = targetShapePoints[i];
+        } else {
+            const idx = i % spherePoints.length;
+            p = spherePoints[idx];
+        }
+        
+        // 握拳收缩逻辑
+        let scale = 1;
+        if (contractionFactor > 0.05) {
+             // 快速收缩公式
+             scale = Math.max(0.01, 1 - Math.pow(contractionFactor, 0.3));
+        }
+
+        targetPositions[i * 3] = p.x * scale;
+        targetPositions[i * 3 + 1] = p.y * scale;
+        targetPositions[i * 3 + 2] = p.z * scale;
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    updateTargetPositions();
+
+    const positions = particles.geometry.attributes.position.array;
+    
+    const time = Date.now() * 0.001;
+    
+    if (currentShape === 'love') {
+        const hue = 0.9 + Math.sin(time * 3) * 0.05; 
+        particles.material.color.setHSL(hue, 1.0, 0.6);
+        particles.rotation.y = Math.sin(time * 0.8) * 0.2; 
+    } else if (contractionFactor > 0.8) {
+        particles.material.color.setHex(0xffaa00);
+        particles.rotation.y += 0.1; // 极速旋转
+    } else if (currentShape === 'sphere') {
+        // 散开状态：蓝色星云
+        particles.material.color.setHex(0x0088ff);
+        particles.rotation.y += 0.001;
+    } else {
+        // 数字状态：青色
+        particles.material.color.setHex(0x00ffff);
+        particles.rotation.y += 0.005;
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const ix = i * 3;
+        const iy = i * 3 + 1;
+        const iz = i * 3 + 2;
+
+        const vibe = (contractionFactor > 0.5) ? 0.5 : 0.05;
+
+        // 使用 lerp 进行位置更新，REACTION_SPEED 决定速度
+        positions[ix] += (targetPositions[ix] - positions[ix]) * REACTION_SPEED + (Math.random() - 0.5) * vibe;
+        positions[iy] += (targetPositions[iy] - positions[iy]) * REACTION_SPEED + (Math.random() - 0.5) * vibe;
+        positions[iz] += (targetPositions[iz] - positions[iz]) * REACTION_SPEED + (Math.random() - 0.5) * vibe;
+    }
+
+    particles.geometry.attributes.position.needsUpdate = true;
+    renderer.render(scene, camera);
+}
+
+
+// --- 3. 手势识别高级逻辑 ---
+
+function getFingerCount(landmarks) {
+    let count = 0;
+    if (landmarks[8].y < landmarks[6].y) count++; // 食指
+    if (landmarks[12].y < landmarks[10].y) count++; // 中指
+    if (landmarks[16].y < landmarks[14].y) count++; // 无名指
+    return count;
+}
+
+function getHandOpenness(landmarks) {
+    const wrist = landmarks[0];
+    const tips = [8, 12, 16]; 
+    let dist = 0;
+    tips.forEach(i => {
+        dist += Math.hypot(landmarks[i].x - wrist.x, landmarks[i].y - wrist.y);
+    });
+    const avg = dist / tips.length;
+    return Math.max(0, Math.min(1, (avg - 0.15) / 0.2)); 
+}
+
+function onResults(results) {
+    loadingScreen.style.opacity = 0;
+    setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+
+    let detectedMode = 'IDLE';
+    let opennessSum = 0;
+    let handCount = 0;
+
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        handCount = results.multiHandLandmarks.length;
+        
+        // --- 双手逻辑 ---
+        if (handCount === 2) {
+            const h1 = results.multiHandLandmarks[0];
+            const h2 = results.multiHandLandmarks[1];
+            const dist = Math.hypot(h1[8].x - h2[8].x, h1[8].y - h2[8].y);
+            
+            if (dist < 0.25) {
+                detectedMode = 'LOVE';
+                currentShape = 'love';
+                gestureText.innerText = "❤️ 我爱你，特特 ❤️";
+                gestureText.className = "text-pink-500 font-bold text-2xl heart-beat";
+                contractionFactor = 0; 
+            }
+            opennessSum = (getHandOpenness(h1) + getHandOpenness(h2)) / 2;
+        } 
+        
+        // --- 单手逻辑 ---
+        if (detectedMode !== 'LOVE') {
+            const landmarks = results.multiHandLandmarks[0]; 
+            const fingers = getFingerCount(landmarks);
+            opennessSum = getHandOpenness(landmarks);
+
+            if (opennessSum > 0.5) { 
+                if (fingers === 1) {
+                    currentShape = '1';
+                    gestureText.innerText = "数字 1";
+                    gestureText.className = "text-cyan-400 font-bold text-xl";
+                } else if (fingers === 2) {
+                    currentShape = '2';
+                    gestureText.innerText = "数字 2";
+                    gestureText.className = "text-cyan-400 font-bold text-xl";
+                } else if (fingers === 3) {
+                    currentShape = '3';
+                    gestureText.innerText = "数字 3";
+                    gestureText.className = "text-cyan-400 font-bold text-xl";
+                } else {
+                    // 五指张开但不构成数字
+                    gestureText.innerText = "手掌张开";
+                    gestureText.className = "text-gray-300 font-bold text-xl";
+                }
+            } else {
+                 gestureText.innerText = "握拳控制";
+                 gestureText.className = "text-yellow-400 font-bold text-xl";
+            }
+        }
+
+        // --- 收缩/扩散控制 ---
+        if (detectedMode !== 'LOVE') {
+            const targetContraction = 1.0 - opennessSum;
+            // 响应更快
+            contractionFactor += (targetContraction - contractionFactor) * 0.25;
+            
+            if (contractionFactor > 0.6) {
+                handStateText.innerText = "聚拢 (握拳)";
+                handStateText.className = "text-red-500 font-bold";
+            } else {
+                handStateText.innerText = "扩散 (张开)";
+                handStateText.className = "text-green-400 font-bold";
+            }
+        } else {
+             handStateText.innerText = "爱心展示中";
+             handStateText.className = "text-pink-500 font-bold";
+        }
+
+    } else {
+        // --- 无手势检测：重置状态 ---
+        currentShape = 'sphere'; // 设为球体（散开）
+        gestureText.innerText = ""; // 隐藏文字
+        handStateText.innerText = "未检测到手";
+        handStateText.className = "text-gray-500";
+        
+        // 快速让粒子散开 (contraction -> 0)
+        contractionFactor += (0 - contractionFactor) * 0.2;
+    }
+}
+
+// --- 启动 ---
+window.onload = function() {
+    initShapes();
+    initThree();
+    animate();
+
+    const hands = new Hands({locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }});
+
+    hands.setOptions({
+        maxNumHands: 2,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    });
+
+    hands.onResults(onResults);
+
+    const cameraUtils = new Camera(videoElement, {
+        onFrame: async () => {
+            await hands.send({image: videoElement});
+        },
+        width: 640,
+        height: 480
+    });
+    
+    cameraUtils.start().catch(e => {
+        loadingScreen.innerHTML = `<div class="text-red-500">无法启动摄像头</div>`;
+    });
+};
+</script>
+</body>
+</html><link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
