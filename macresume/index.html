@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>梅汉斌 - 个人主页 (MeiOS)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Markdown Parser for Gemini responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        /* Custom Font Setup */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg-window: #ffffff;
+            --bg-sidebar: rgba(243, 244, 246, 0.9);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --terminal-bg: #1e1e1e;
+        }
+
+        body.dark-mode {
+            --bg-window: #1f2937; /* Gray 800 */
+            --bg-sidebar: rgba(17, 24, 39, 0.9); /* Gray 900 */
+            --text-primary: #f3f4f6; /* Gray 100 */
+            --text-secondary: #9ca3af; /* Gray 400 */
+            --border-color: #374151; /* Gray 700 */
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.3s, background-color 0.3s;
+        }
+
+        /* Wallpapers */
+        .bg-wallpaper {
+            background: url('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80') no-repeat center center fixed;
+            background-size: cover;
+            transition: filter 0.5s;
+        }
+        
+        body.dark-mode .bg-wallpaper {
+            filter: brightness(0.6);
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        body.dark-mode .glass {
+            background: rgba(0, 0, 0, 0.65);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Dock Animation */
+        .dock-container {
+            transition: transform 0.2s;
+        }
+        .dock-icon {
+            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: bottom;
+        }
+        .dock-icon:hover {
+            transform: scale(1.2) translateY(-10px);
+            margin: 0 10px;
+        }
+        
+        /* Window Styles */
+        .window {
+            transition: opacity 0.2s, width 0.3s, height 0.3s, transform 0.2s; 
+            box-shadow: 0 0px 15px rgba(0,0,0,0.1), 0 20px 50px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            background-color: var(--bg-window);
+            color: var(--text-primary);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .window {
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .window-animating {
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Common Scrollbar */
+        .window-content {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.2) transparent;
+        }
+        .window-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .window-content::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        body.dark-mode .window-content::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        /* Sidebar Selection Style */
+        .sidebar-item {
+            border-radius: 6px;
+            transition: background-color 0.1s;
+            color: var(--text-secondary);
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        body.dark-mode .sidebar-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .sidebar-item.active {
+            background-color: rgba(0,0,0,0.1);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        body.dark-mode .sidebar-item.active {
+            background-color: rgba(255,255,255,0.15);
+        }
+
+        /* Chat Bubbles */
+        .chat-bubble-user {
+            background-color: #007AFF;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .chat-bubble-ai {
+            background-color: #E9E9EB;
+            color: black;
+            border-radius: 18px 18px 18px 4px;
+        }
+        body.dark-mode .chat-bubble-ai {
+            background-color: #374151;
+            color: white;
+        }
+        
+        /* A4 Paper */
+        .a4-paper {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            transition: none; /* Paper always stays white */
+        }
+
+        /* Terminal Cursor */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Mobile Handling */
+        @media (max-width: 768px) {
+            .window {
+                width: 100% !important;
+                height: calc(100% - 80px) !important;
+                top: 30px !important;
+                left: 0 !important;
+                border-radius: 0 0 10px 10px;
+            }
+            .a4-paper {
+                width: 100%;
+                padding: 15px;
+                min-height: auto;
+            }
+            .hide-on-mobile {
+                display: none;
+            }
+        }
+        
+        /* Utility for dark mode text */
+        .text-theme-primary { color: var(--text-primary); }
+        .text-theme-secondary { color: var(--text-secondary); }
+        .bg-theme-window { background-color: var(--bg-window); }
+        .bg-theme-sidebar { background-color: var(--bg-sidebar); }
+        .border-theme { border-color: var(--border-color); }
+
+    </style>
+</head>
+<body class="bg-wallpaper h-screen w-screen overflow-hidden text-gray-800 font-sans">
+
+    <!-- Desktop Environment -->
+    <div id="desktop" class="h-full w-full flex flex-col">
+        
+        <!-- Menu Bar -->
+        <div class="h-8 w-full glass flex items-center justify-between px-4 text-sm font-medium z-50 select-none shadow-sm backdrop-blur-xl">
+            <div class="flex items-center gap-5">
+                <i class="ph-fill ph-apple-logo text-lg cursor-pointer hover:opacity-70"></i>
+                <span class="font-bold cursor-pointer hidden sm:block">MeiOS</span>
+                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.file">文件</span>
+                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.edit">编辑</span>
+                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.view">查看</span>
+                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.window">窗口</span>
+                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.help">帮助</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle -->
+                <i class="ph ph-moon text-lg cursor-pointer hover:scale-110 transition-transform" onclick="toggleTheme()" id="theme-icon" title="Toggle Dark Mode"></i>
+                
+                <!-- Language Toggle -->
+                <div class="flex items-center cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 px-2 rounded transition-colors" onclick="toggleLanguage()">
+                    <i class="ph ph-globe text-lg mr-1"></i>
+                    <span class="text-xs font-bold" id="lang-indicator">中</span>
+                </div>
+
+                <div class="w-[1px] h-4 bg-gray-400/50"></div>
+
+                <div class="flex items-center gap-2">
+                     <i class="ph ph-battery-charging-vertical text-lg"></i>
+                     <span class="text-xs">100%</span>
+                </div>
+                <i class="ph ph-wifi-high text-lg"></i>
+                <i class="ph ph-magnifying-glass text-lg cursor-pointer"></i>
+                <span id="clock" class="w-32 text-right font-medium"></span>
+            </div>
+        </div>
+
+        <!-- Desktop Area -->
+        <div class="flex-1 relative p-4" id="desktop-area">
+            
+            <!-- Desktop Icons -->
+            <div class="flex flex-col gap-6 w-24 absolute right-4 top-4 items-end">
+                 <!-- Resume PDF -->
+                 <div onclick="openWindow('preview')" class="flex flex-col items-center gap-1 group cursor-pointer w-20">
+                    <div class="w-16 h-20 bg-white rounded flex items-center justify-center shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform border border-gray-200">
+                        <div class="absolute top-0 right-0 w-5 h-5 bg-gray-100 -mr-2 -mt-2 rotate-45 border-b border-l border-gray-200"></div>
+                        <span class="text-[9px] font-bold text-red-500 absolute top-2 left-2">PDF</span>
+                        <i class="ph-fill ph-file-text text-4xl text-gray-300 mt-2"></i>
+                        <div class="absolute bottom-2 text-[6px] text-gray-400 w-full text-center">Resume</div>
+                    </div>
+                    <span class="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded shadow-sm text-center leading-tight" data-i18n="desktop.pdf">我的简历.pdf</span>
+                </div>
+
+                <!-- Folder -->
+                <div onclick="openWindow('finder')" class="flex flex-col items-center gap-1 group cursor-pointer w-20">
+                    <div class="w-16 h-16 bg-blue-400 rounded-xl flex items-center justify-center shadow-lg group-hover:bg-blue-300 transition-colors border border-blue-300/50">
+                        <div class="bg-white w-8 h-8 rounded-full flex items-center justify-center mb-1">
+                             <i class="ph-fill ph-user text-blue-500 text-lg"></i>
+                        </div>
+                    </div>
+                    <span class="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded shadow-sm text-center" data-i18n="desktop.folder">个人资料</span>
+                </div>
+            </div>
+
+            <!-- Windows Container -->
+            <div id="windows-container"></div>
+
+        </div>
+
+        <!-- Dock -->
+        <div class="h-24 w-full flex justify-center items-end pb-3 z-50 pointer-events-none">
+            <div class="glass px-3 py-3 rounded-2xl flex items-end gap-3 mb-2 shadow-2xl border-white/20 border pointer-events-auto bg-white/30 backdrop-blur-2xl dock-container">
+                
+                <!-- Finder -->
+                <div onclick="openWindow('finder')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-b from-blue-100 to-blue-50"></div>
+                    <div class="relative w-full h-full flex items-center justify-center">
+                        <i class="ph-fill ph-smiley text-4xl text-blue-600"></i>
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
+                    </div>
+                    <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-finder"></div>
+                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Finder</div>
+                </div>
+
+                <!-- Safari -->
+                <div onclick="openWindow('safari')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" class="w-10 h-10 object-contain" alt="Safari">
+                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-safari"></div>
+                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Safari</div>
+                </div>
+
+                <!-- Terminal -->
+                <div onclick="openWindow('terminal')" class="dock-icon w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group border border-gray-600">
+                     <div class="text-white font-mono font-bold text-xs">>_</div>
+                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-terminal"></div>
+                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Terminal</div>
+                </div>
+                
+                 <!-- Gemini AI Icon -->
+                <div onclick="openWindow('gemini')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group border border-blue-100 overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 via-purple-500 to-red-400 opacity-20"></div>
+                    <i class="ph-fill ph-sparkle text-3xl text-purple-600"></i>
+                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-gemini"></div>
+                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Gemini AI</div>
+                </div>
+
+                <!-- Mail -->
+                <div onclick="openWindow('mail')" class="dock-icon w-12 h-12 bg-sky-500 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
+                    <i class="ph-fill ph-envelope text-3xl text-white"></i>
+                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-mail"></div>
+                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Mail</div>
+                </div>
+                
+                 <div class="w-[1px] h-10 bg-gray-400/50 mx-1 self-center"></div>
+
+                <!-- PDF -->
+                <div onclick="openWindow('preview')" class="dock-icon w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
+                    <i class="ph-fill ph-file-pdf text-3xl text-red-500"></i>
+                    <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-preview"></div>
+                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Preview</div>
+                </div>
+                
+                <div onclick="window.open('https://github.com/topics/resume', '_blank')" class="dock-icon w-12 h-12 bg-black rounded-full flex items-center justify-center cursor-pointer shadow-md relative group" title="Github">
+                    <i class="ph-fill ph-github-logo text-3xl text-white"></i>
+                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">GitHub</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- State Management ---
+        let currentLang = 'zh'; // 'zh' or 'en'
+        let isDarkMode = false;
+
+        // --- Translations ---
+        const i18n = {
+            zh: {
+                menu: { file: "文件", edit: "编辑", view: "查看", window: "窗口", help: "帮助" },
+                desktop: { pdf: "我的简历.pdf", folder: "个人资料" },
+                windows: {
+                    finder: "个人资料 - 梅汉斌",
+                    safari: "工作经历 - Safari",
+                    terminal: "user@MeiOS: ~",
+                    gemini: "Gemini AI 面试助手",
+                    mail: "邮件 (Mail)",
+                    preview: "我的简历.pdf"
+                },
+                finder: {
+                    sidebar: {
+                        info: "个人信息",
+                        overview: "概览",
+                        education: "教育背景",
+                        experience: "工作经历",
+                        skills: "专业技能",
+                        location: "位置",
+                        desktop: "桌面",
+                        download: "下载"
+                    },
+                    overview: {
+                        title: "个人概览",
+                        intro: "个人简介",
+                        strength: "核心优势"
+                    },
+                    edu: { title: "教育背景" },
+                    exp: { title: "工作经历" },
+                    skill: { title: "专业技能" }
+                },
+                gemini: {
+                    title: "Gemini 助手",
+                    subtitle: "全能问答：基于简历内容",
+                    intro: "你好！我是梅汉斌的 AI 面试助手。<br>你可以问我任何简历上的细节，例如：<br>“他在蓝芯负责什么？”<br>“他的英语水平怎么样？”",
+                    placeholder: "输入问题..."
+                }
+            },
+            en: {
+                menu: { file: "File", edit: "Edit", view: "View", window: "Window", help: "Help" },
+                desktop: { pdf: "Resume.pdf", folder: "Profile" },
+                windows: {
+                    finder: "Profile - Mei Hanbin",
+                    safari: "Experience - Safari",
+                    terminal: "user@MeiOS: ~",
+                    gemini: "Gemini AI Assistant",
+                    mail: "Mail",
+                    preview: "Resume.pdf"
+                },
+                finder: {
+                    sidebar: {
+                        info: "Info",
+                        overview: "Overview",
+                        education: "Education",
+                        experience: "Experience",
+                        skills: "Skills",
+                        location: "Locations",
+                        desktop: "Desktop",
+                        download: "Downloads"
+                    },
+                    overview: {
+                        title: "Overview",
+                        intro: "Summary",
+                        strength: "Core Strengths"
+                    },
+                    edu: { title: "Education" },
+                    exp: { title: "Experience" },
+                    skill: { title: "Skills" }
+                },
+                gemini: {
+                    title: "Gemini Assistant",
+                    subtitle: "Ask anything about the resume",
+                    intro: "Hello! I am Mei Hanbin's AI Assistant.<br>Ask me anything, e.g.:<br>'What did he do at Lanxin?'<br>'How is his English?'",
+                    placeholder: "Type a question..."
+                }
+            }
+        };
+
+        // --- Data: Mei Hanbin's Resume Content (Bilingual) ---
+        const resumeData = {
+            zh: {
+                profile: {
+                    name: "梅汉斌",
+                    role: "市场部海外市场实习生 | 英语专业八级",
+                    phone: "15221364583",
+                    email: "meihanbin@qq.com",
+                    summary: "具备敏锐的市场洞察力与跨文化沟通能力。擅长结合政策导向与行业趋势进行市场调研，拥有丰富的跨平台内容运营与产品宣传经验。熟练使用AI工具优化工作流，致力于通过多语言内容助力产品全球化推广。",
+                    advantages: [
+                        "具备市场调研与竞品分析能力，能够结合政策导向与行业趋势，快速形成有针对性的分析报告。",
+                        "拥有跨平台内容运营与产品宣传经验，能够提炼产品卖点，设计多语言宣传资料。",
+                        "具备跨部门沟通与项目协同能力，能够推动产品方案优化和资料落地。",
+                        "熟练使用Figma、Canva、AI工具，提高文档编制与方案设计效率。",
+                        "英语专业八级良好，能够独立完成中英文资料翻译与撰写。"
+                    ]
+                },
+                education: [
+                    { school: "青岛科技大学", degree: "出版硕士", year: "2023.09 - 2026.07", details: "多次参与策划图书选题,并进行市场调研与数据分析，寻找符合市场需求的出版产品。能够运用PS，ID进行设计和排版，能够制作H5宣传页面。" },
+                    { school: "浙大宁波理工学院", degree: "英语本科", year: "2019.08 - 2023.06", details: "主修综合英语、英美文化、商务英语沟通、跨境电商、国际营销、商务英语翻译等课程，英语基础扎实。" }
+                ],
+                experience: [
+                    {
+                        company: "杭州蓝芯科技有限公司",
+                        role: "市场部－海外市场实习生",
+                        location: "浙江杭州",
+                        date: "2024.07 - 2025.01",
+                        details: [
+                            "**市场调研与竞品分析**：利用SEMrush收集数据，输出调研报告，提炼产品差异化卖点。",
+                            "**SEO与网站运营**：使用 Google Analytics 跟踪流量，优化关键词策略，使用HubSpot进行营销自动化。",
+                            "**品牌传播**：运营YouTube、LinkedIn及国内B站（视频发布26个，浏览量提升200%）。",
+                            "**宣传资料设计**：熟练使用设计工具进行画册、海报排版，提升产品亮点呈现。",
+                            "**知识库管理**：搭建飞书官方中英文知识库，统一管理技术与销售文档。"
+                        ]
+                    },
+                    {
+                        company: "赛轮集团股份有限公司",
+                        role: "人资中心－翻译实习生",
+                        location: "山东青岛",
+                        date: "2025.03 - 2025.06",
+                        details: [
+                            "**培训文档翻译**：负责公司培训类文档的中英文翻译，确保术语准确。",
+                            "**AI驱动翻译流程**：自主搭建“大模型翻译—智能校对—自动审核”流程，提升效率。",
+                            "**跨部门协作**：协助HR团队进行候选人资料处理与面试沟通。"
+                        ]
+                    }
+                ],
+                skills: [
+                    { name: "英语能力", level: "TEM-8 (良好), TEM-4" },
+                    { name: "设计工具", level: "Figma, Canva, Photoshop, InDesign" },
+                    { name: "数据分析", level: "SEMrush, Google Analytics" },
+                    { name: "办公/AI", level: "Microsoft Office, AI Prompting, HubSpot" },
+                    { name: "新媒体运营", level: "LinkedIn, YouTube, Bilibili, 知乎" }
+                ]
+            },
+            en: {
+                 profile: {
+                    name: "Mei Hanbin",
+                    role: "Overseas Marketing Intern | TEM-8 Certified",
+                    phone: "15221364583",
+                    email: "meihanbin@qq.com",
+                    summary: "Possesses acute market insight and cross-cultural communication skills. Skilled in market research combining policy trends, with extensive experience in cross-platform content operation and product promotion. Proficient in using AI tools to optimize workflows.",
+                    advantages: [
+                        "Market research & competitor analysis skills, forming targeted reports based on trends.",
+                        "Cross-platform content operation & product promotion experience.",
+                        "Cross-departmental communication & project collaboration skills.",
+                        "Proficient in Figma, Canva, AI tools for document preparation & design.",
+                        "TEM-8 Certified (Good), capable of independent Chinese-English translation."
+                    ]
+                },
+                education: [
+                    { school: "Qingdao University of Science and Technology", degree: "Master of Publishing", year: "2023.09 - 2026.07", details: "Participated in book topic planning, market research & data analysis. Skilled in PS, ID for design and layout." },
+                    { school: "NingboTech University", degree: "BA in English", year: "2019.08 - 2023.06", details: "Majored in Comprehensive English, Anglo-American Culture, Business Communication, Cross-border E-commerce, etc." }
+                ],
+                experience: [
+                    {
+                        company: "Hangzhou Lanxin Technology Co., Ltd.",
+                        role: "Overseas Marketing Intern",
+                        location: "Hangzhou, Zhejiang",
+                        date: "2024.07 - 2025.01",
+                        details: [
+                            "**Market Research**: Used SEMrush for data collection and competitor analysis.",
+                            "**SEO & Web Ops**: Tracked traffic via Google Analytics, optimized keywords, used HubSpot for automation.",
+                            "**Brand Communication**: Managed YouTube, LinkedIn & Bilibili (Views up 200%).",
+                            "**Material Design**: Designed brochures and posters to highlight product features.",
+                            "**Knowledge Base**: Built official Chinese-English knowledge base using Lark."
+                        ]
+                    },
+                    {
+                        company: "Sailun Group Co., Ltd.",
+                        role: "HR Translation Intern",
+                        location: "Qingdao, Shandong",
+                        date: "2025.03 - 2025.06",
+                        details: [
+                            "**Translation**: Translated training documents ensuring terminological accuracy.",
+                            "**AI Workflow**: Built 'LLM Translation - Smart Proofreading - Auto Audit' workflow.",
+                            "**Collaboration**: Assisted HR with candidate data processing and communication."
+                        ]
+                    }
+                ],
+                skills: [
+                    { name: "English", level: "TEM-8 (Good), TEM-4" },
+                    { name: "Design", level: "Figma, Canva, Photoshop, InDesign" },
+                    { name: "Data", level: "SEMrush, Google Analytics" },
+                    { name: "Office/AI", level: "Microsoft Office, AI Prompting, HubSpot" },
+                    { name: "Media Ops", level: "LinkedIn, YouTube, Bilibili" }
+                ]
+            }
+        };
+
+        // --- Helpers to get current data ---
+        function getData() { return resumeData[currentLang]; }
+        function getTexts() { return i18n[currentLang]; }
+
+        // --- Window Management System ---
+        let maxZIndex = 10;
+        
+        // Window Definitions with optimized layout
+        const windows = {
+            finder: {
+                id: 'finder',
+                width: 800,
+                height: 550,
+                x: 80,
+                y: 60,
+                render: () => {
+                    const d = getData();
+                    const t = getTexts().finder;
+                    return `
+                    <div class="flex h-full bg-theme-window text-sm" id="finder-container">
+                        <!-- Finder Sidebar -->
+                        <div class="w-48 bg-theme-sidebar backdrop-blur border-r border-theme flex flex-col pt-3 pb-4 select-none">
+                            <div class="px-2 mb-2 text-[11px] font-semibold text-theme-secondary pl-4">${t.sidebar.info}</div>
+                            <div onclick="updateFinderView('overview')" class="sidebar-item active mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-overview">
+                                <i class="ph-fill ph-user text-blue-500"></i> ${t.sidebar.overview}
+                            </div>
+                            <div onclick="updateFinderView('education')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-education">
+                                <i class="ph-fill ph-graduation-cap text-gray-500"></i> ${t.sidebar.education}
+                            </div>
+                            <div onclick="updateFinderView('experience')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-experience">
+                                <i class="ph-fill ph-briefcase text-gray-500"></i> ${t.sidebar.experience}
+                            </div>
+                            <div onclick="updateFinderView('skills')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-skills">
+                                <i class="ph-fill ph-lightning text-gray-500"></i> ${t.sidebar.skills}
+                            </div>
+                            
+                            <div class="mt-4 px-2 mb-2 text-[11px] font-semibold text-theme-secondary pl-4">${t.sidebar.location}</div>
+                            <div class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer">
+                                <i class="ph-fill ph-desktop text-gray-500"></i> ${t.sidebar.desktop}
+                            </div>
+                            <div class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer">
+                                <i class="ph-fill ph-download-simple text-gray-500"></i> ${t.sidebar.download}
+                            </div>
+                        </div>
+                        
+                        <!-- Main Content Area -->
+                        <div class="flex-1 bg-theme-window overflow-y-auto flex flex-col">
+                             <!-- Navigation Toolbar -->
+                            <div class="h-12 border-b border-theme flex items-center px-4 gap-4 sticky top-0 bg-theme-window/95 backdrop-blur z-10 justify-between">
+                                <div class="flex gap-2 text-theme-secondary">
+                                    <i class="ph ph-caret-left hover:text-theme-primary cursor-pointer"></i>
+                                    <i class="ph ph-caret-right hover:text-theme-primary cursor-pointer"></i>
+                                    <span class="font-bold text-theme-primary ml-2" id="finder-title">${t.overview.title}</span>
+                                </div>
+                                <div class="flex gap-2 text-theme-secondary">
+                                    <i class="ph ph-magnifying-glass hover:text-theme-primary cursor-pointer"></i>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Content -->
+                            <div id="finder-content" class="p-8 text-theme-primary">
+                                <!-- Default Content (Overview) - Populated by JS -->
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            },
+            gemini: {
+                id: 'gemini',
+                width: 400,
+                height: 550,
+                x: 600,
+                y: 100,
+                render: () => {
+                    const t = getTexts().gemini;
+                    return `
+                    <div class="flex flex-col h-full bg-theme-window">
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 p-4 border-b border-theme flex items-center gap-3">
+                            <div class="bg-white dark:bg-gray-800 p-1.5 rounded-lg shadow-sm">
+                                <i class="ph-fill ph-sparkle text-xl text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-theme-primary">${t.title}</div>
+                                <div class="text-xs text-theme-secondary">${t.subtitle}</div>
+                            </div>
+                        </div>
+                        
+                        <div id="gemini-chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-theme-window">
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0">
+                                    <i class="ph-fill ph-sparkle"></i>
+                                </div>
+                                <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm max-w-[85%]">
+                                    ${t.intro}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-theme-sidebar border-t border-theme">
+                            <div class="relative flex items-center">
+                                <input type="text" id="gemini-input" class="w-full bg-theme-window text-theme-primary border border-theme rounded-full px-4 py-2 pr-10 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-gray-400" placeholder="${t.placeholder}" onkeydown="if(event.key === 'Enter') sendGeminiMessage()">
+                                <button onclick="sendGeminiMessage()" class="absolute right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-colors shadow-sm">
+                                    <i class="ph-bold ph-arrow-up"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            },
+            safari: {
+                id: 'safari',
+                width: 800,
+                height: 600,
+                x: 150,
+                y: 60,
+                render: () => {
+                    const d = getData();
+                    return `
+                    <div class="flex flex-col h-full bg-white dark:bg-[#1e1e1e]">
+                        <!-- Safari Toolbar -->
+                        <div class="h-12 bg-[#f6f6f6] dark:bg-[#333] border-b border-[#d1d1d1] dark:border-[#444] flex items-center px-4 gap-4 justify-between">
+                            <div class="flex gap-4">
+                                <div class="flex gap-1 text-gray-500">
+                                    <i class="ph ph-caret-left text-lg"></i>
+                                    <i class="ph ph-caret-right text-lg text-gray-300"></i>
+                                </div>
+                                <i class="ph ph-sidebar text-lg text-gray-500"></i>
+                            </div>
+                            
+                            <div class="flex-1 max-w-xl mx-auto">
+                                <div class="bg-white dark:bg-[#222] border border-[#d1d1d1] dark:border-[#444] rounded-lg h-8 flex items-center justify-center text-xs text-gray-700 dark:text-gray-300 shadow-sm relative group">
+                                    <i class="ph-fill ph-lock-key text-gray-400 absolute left-2"></i>
+                                    <span class="group-hover:hidden">career.mei-hanbin.com</span>
+                                    <span class="hidden group-hover:block text-gray-400">https://career.mei-hanbin.com/experience</span>
+                                    <i class="ph ph-arrow-clockwise text-gray-500 absolute right-2 text-sm"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 text-gray-500">
+                                <i class="ph ph-share-network text-lg"></i>
+                                <i class="ph ph-plus text-lg"></i>
+                                <i class="ph ph-squares-four text-lg"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Webpage Content -->
+                        <div class="flex-1 overflow-y-auto bg-white dark:bg-[#1e1e1e]">
+                            <div class="max-w-4xl mx-auto p-10">
+                                <div class="text-center mb-12">
+                                    <div class="inline-block bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-3">WORK EXPERIENCE</div>
+                                    <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">${currentLang === 'zh' ? '职业生涯与项目' : 'Career & Projects'}</h1>
+                                    <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">${currentLang === 'zh' ? '在市场营销、内容运营和跨文化沟通领域的实战经验总结。' : 'Experience in marketing, content operations, and cross-cultural communication.'}</p>
+                                </div>
+
+                                <div class="space-y-12 relative before:absolute before:left-0 before:top-2 before:bottom-0 before:w-0.5 before:bg-gray-200 dark:before:bg-gray-700 md:before:left-1/2">
+                                    ${d.experience.map((exp, index) => `
+                                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                                            <!-- Dot -->
+                                            <div class="absolute left-[-5px] md:left-1/2 md:-ml-1.5 w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-white dark:border-gray-800 group-hover:bg-blue-500 transition-colors z-10"></div>
+                                            
+                                            <div class="w-full md:w-[45%] mb-4 md:mb-0 ${index % 2 === 0 ? 'md:order-1 md:text-right' : 'md:order-3 md:text-left'} pl-6 md:pl-0">
+                                                <div class="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1">${exp.date}</div>
+                                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${exp.company}</h3>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400 font-medium">${exp.role}</div>
+                                                <div class="text-xs text-gray-400 mt-1"><i class="ph-fill ph-map-pin"></i> ${exp.location}</div>
+                                            </div>
+                                            
+                                            <div class="w-full md:w-[45%] ${index % 2 === 0 ? 'md:order-3' : 'md:order-1'} pl-6 md:pl-0">
+                                                <div class="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                                                    <ul class="space-y-2">
+                                                        ${exp.details.map(d => `
+                                                            <li class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 leading-relaxed text-left">
+                                                                <i class="ph-fill ph-check-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
+                                                                <span>${marked.parseInline(d)}</span>
+                                                            </li>
+                                                        `).join('')}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <!-- Footer Imitation -->
+                            <div class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 mt-12 text-center text-gray-400 text-xs">
+                                &copy; 2025 Mei Hanbin. Designed with MeiOS.
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            },
+            preview: {
+                id: 'preview',
+                width: 700,
+                height: 850,
+                x: 300,
+                y: 50,
+                render: () => {
+                    const d = getData();
+                    return `
+                    <div class="bg-[#525659] h-full flex flex-col">
+                        <!-- PDF Toolbar -->
+                        <div class="h-10 bg-[#323639] flex items-center justify-between px-4 shadow-md z-10 text-gray-300 text-xs">
+                             <div class="font-medium text-white truncate w-1/3">${getTexts().desktop.pdf}</div>
+                             <div class="flex gap-4">
+                                <span class="hover:text-white cursor-pointer bg-black/30 px-2 py-0.5 rounded">1 / 1</span>
+                                <span class="hover:text-white cursor-pointer border-l border-gray-600 pl-4">-</span>
+                                <span class="hover:text-white cursor-pointer">100%</span>
+                                <span class="hover:text-white cursor-pointer">+</span>
+                             </div>
+                             <div class="flex gap-3 w-1/3 justify-end">
+                                <i class="ph ph-download-simple hover:text-white cursor-pointer text-lg" title="下载" onclick="alert('模拟下载简历')"></i>
+                                <i class="ph ph-printer hover:text-white cursor-pointer text-lg" title="打印"></i>
+                             </div>
+                        </div>
+                        
+                        <!-- PDF Container -->
+                        <div class="flex-1 overflow-y-auto overflow-x-hidden p-8 flex justify-center bg-[#525659] window-content" id="pdf-container">
+                            <div class="a4-paper relative">
+                                <!-- Resume Header -->
+                                <header class="border-b-2 border-gray-800 pb-6 mb-6">
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <h1 class="text-3xl font-bold text-gray-900 tracking-wide">${d.profile.name}</h1>
+                                            <p class="text-gray-600 mt-2 font-medium">${d.profile.role}</p>
+                                        </div>
+                                        <div class="text-right text-sm text-gray-600 leading-relaxed">
+                                            <div>${d.profile.phone}</div>
+                                            <div>${d.profile.email}</div>
+                                            <div>${currentLang === 'zh' ? '浙江杭州 / 山东青岛' : 'Hangzhou / Qingdao, China'}</div>
+                                        </div>
+                                    </div>
+                                </header>
+                                
+                                <!-- Content Columns -->
+                                <div class="grid grid-cols-1 gap-6">
+                                    <!-- Education -->
+                                    <section>
+                                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.edu.title}</h2>
+                                        <div class="space-y-3">
+                                            ${d.education.map(edu => `
+                                                <div class="flex justify-between">
+                                                    <div>
+                                                        <span class="font-bold text-gray-800">${edu.school}</span>
+                                                        <span class="mx-2 text-gray-400">|</span>
+                                                        <span class="text-gray-700">${edu.degree}</span>
+                                                    </div>
+                                                    <span class="text-gray-600 font-mono text-sm">${edu.year}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </section>
+
+                                    <!-- Experience -->
+                                    <section>
+                                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider mt-2">${getTexts().finder.exp.title}</h2>
+                                        <div class="space-y-5">
+                                            ${d.experience.map(exp => `
+                                                <div>
+                                                    <div class="flex justify-between items-baseline mb-1">
+                                                        <h3 class="font-bold text-gray-800">${exp.company}</h3>
+                                                        <span class="text-gray-600 font-mono text-sm">${exp.date}</span>
+                                                    </div>
+                                                    <div class="text-gray-700 italic mb-2 text-sm">${exp.role} | ${exp.location}</div>
+                                                    <ul class="list-disc ml-4 space-y-1 text-gray-700 text-sm">
+                                                        ${exp.details.map(d => `<li>${marked.parseInline(d)}</li>`).join('')}
+                                                    </ul>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </section>
+                                    
+                                    <!-- Skills & Profile -->
+                                    <section class="grid grid-cols-2 gap-6 mt-2">
+                                        <div>
+                                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.overview.strength}</h2>
+                                            <ul class="list-disc ml-4 text-sm text-gray-700 space-y-1">
+                                                ${d.profile.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.skill.title}</h2>
+                                            <ul class="text-sm text-gray-700 space-y-2">
+                                                ${d.skills.map(skill => `
+                                                    <li class="flex justify-between border-b border-dotted border-gray-200 pb-1">
+                                                        <span class="font-medium">${skill.name}</span>
+                                                        <span class="text-gray-600 text-right text-xs">${skill.level}</span>
+                                                    </li>
+                                                `).join('')}
+                                            </ul>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            },
+            terminal: {
+                id: 'terminal',
+                width: 550,
+                height: 380,
+                x: 200,
+                y: 120,
+                render: () => `
+                    <div class="bg-[#1e1e1e] h-full text-[#33ff00] font-mono p-4 text-sm overflow-y-auto window-content" onclick="document.getElementById('term-input').focus()">
+                        <div class="mb-2 text-gray-400">Last login: ${new Date().toDateString()} on ttys001</div>
+                        <div id="typewriter-area"></div>
+                        <div class="flex mt-2 hidden" id="terminal-input-line">
+                            <span class="mr-2">MeiOS:~ user$</span>
+                            <input type="text" id="term-input" class="bg-transparent border-none text-[#33ff00] focus:outline-none flex-1 font-mono" autocomplete="off">
+                        </div>
+                    </div>`
+            },
+            mail: {
+                id: 'mail',
+                width: 700,
+                height: 500,
+                x: 250,
+                y: 150,
+                render: () => {
+                    const d = getData();
+                    return `
+                     <div class="flex h-full bg-theme-window">
+                        <!-- Mail Sidebar -->
+                        <div class="w-48 bg-theme-sidebar border-r border-theme pt-3 flex flex-col">
+                             <div class="px-3 mb-2 text-xs font-bold text-theme-secondary uppercase">Mailboxes</div>
+                             <div class="bg-blue-500 text-white px-3 py-1 mx-2 rounded flex justify-between text-sm">
+                                <span>Inbox</span>
+                                <span>1</span>
+                             </div>
+                             <div class="px-3 py-1 mx-2 rounded flex justify-between text-sm text-theme-secondary hover:bg-black/10 dark:hover:bg-white/10 mt-1">
+                                <span>Sent</span>
+                             </div>
+                             <div class="px-3 py-1 mx-2 rounded flex justify-between text-sm text-theme-secondary hover:bg-black/10 dark:hover:bg-white/10 mt-1">
+                                <span>Drafts</span>
+                             </div>
+                        </div>
+                        
+                        <!-- Mail List & Content -->
+                        <div class="flex-1 flex flex-col">
+                             <div class="h-10 border-b border-theme flex items-center px-4 justify-between bg-theme-window/50">
+                                <div class="flex gap-3 text-theme-secondary">
+                                    <i class="ph ph-envelope-simple text-lg"></i>
+                                    <i class="ph ph-trash text-lg"></i>
+                                    <i class="ph ph-archive text-lg"></i>
+                                </div>
+                                <div class="text-theme-secondary text-xs">Updated Just Now</div>
+                                <i class="ph ph-pencil-simple-line text-blue-500 text-lg cursor-pointer" onclick="window.location.href='mailto:meihanbin@qq.com'"></i>
+                             </div>
+                             
+                             <div class="flex-1 p-6 text-theme-primary">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h2 class="text-xl font-bold">${currentLang === 'zh' ? '期待您的来信' : 'Looking forward to hearing from you'}</h2>
+                                        <div class="mt-1 flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male">
+                                            </div>
+                                            <div class="text-sm">
+                                                <span class="font-bold">Mei Hanbin</span>
+                                                <span class="text-theme-secondary">&lt;${d.profile.email}&gt;</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-theme-secondary">Today</div>
+                                </div>
+                                
+                                <div class="prose text-sm text-theme-primary leading-relaxed">
+                                    <p>${currentLang === 'zh' ? '尊敬的 HR / 招聘经理：' : 'Dear Hiring Manager,'}</p>
+                                    <p class="mt-4">${currentLang === 'zh' ? '您好！感谢您浏览我的个人主页。' : 'Thank you for visiting my personal site.'}</p>
+                                    <p class="mt-2">${currentLang === 'zh' ? '如果您对我的简历感兴趣，或有任何工作机会想与我沟通，请直接通过下方联系方式与我联系。' : 'If you are interested in my profile, please feel free to contact me.'}</p>
+                                    
+                                    <div class="my-6 p-4 bg-theme-sidebar rounded-lg border border-theme inline-block pr-12">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <i class="ph-fill ph-phone text-blue-500"></i>
+                                            <span class="font-medium select-all">${d.profile.phone}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <i class="ph-fill ph-envelope-simple text-blue-500"></i>
+                                            <a href="mailto:${d.profile.email}" class="hover:underline text-blue-600 select-all">${d.profile.email}</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <p>${currentLang === 'zh' ? '祝工作顺利！' : 'Best Regards,'}</p>
+                                </div>
+                             </div>
+                        </div>
+                     </div>`;
+                }
+            }
+        };
+
+        // --- Core Logic ---
+
+        function openWindow(appId) {
+            const container = document.getElementById('windows-container');
+            
+            if (document.getElementById(`window-${appId}`)) {
+                bringToFront(appId);
+                restoreWindow(appId);
+                return;
+            }
+
+            const app = windows[appId];
+            if(!app) return;
+
+            const dot = document.getElementById(`dot-${appId}`);
+            if(dot) dot.style.opacity = '1';
+            
+            const icon = dot ? dot.parentElement : null;
+            if(icon) {
+                icon.style.transform = "translateY(-15px)";
+                setTimeout(() => icon.style.transform = "", 200);
+            }
+
+            const win = document.createElement('div');
+            win.id = `window-${appId}`;
+            win.className = `window rounded-lg overflow-hidden`;
+            
+            const offset = document.querySelectorAll('.window').length * 20;
+            win.style.width = app.width + 'px';
+            win.style.height = app.height + 'px';
+            win.style.top = (app.y + offset) + 'px';
+            win.style.left = (app.x + offset) + 'px';
+            win.style.zIndex = ++maxZIndex;
+            
+            win.style.opacity = '0';
+            win.style.transform = 'scale(0.95)';
+
+            // Render content using dynamic function
+            const contentHTML = app.render();
+            const winTitle = getTexts().windows[appId] || "Window";
+            
+            // Header Color logic: Terminal and Preview are always dark-ish, others follow theme
+            const isAlwaysDark = appId === 'terminal';
+            let headerClass = isAlwaysDark ? 'bg-[#323639] text-gray-400 border-black/20' : 'bg-gray-200/90 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-black/5 dark:border-white/10';
+
+            win.innerHTML = `
+                <!-- Window Header (Draggable Area) -->
+                <div class="h-8 ${headerClass} border-b flex items-center px-3 cursor-default select-none relative" id="header-${appId}">
+                    <div class="flex gap-2 group z-10 absolute left-3">
+                        <div onclick="closeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] hover:bg-[#ff5f56]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Close">x</div>
+                        <div onclick="minimizeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] hover:bg-[#ffbd2e]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Minimize">-</div>
+                        <div onclick="maximizeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] hover:bg-[#27c93f]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Zoom">+</div>
+                    </div>
+                    <div class="w-full text-center text-xs font-semibold" id="title-${appId}">${winTitle}</div>
+                </div>
+                <!-- Window Body -->
+                <div class="flex-1 overflow-hidden relative" id="body-${appId}">
+                    ${contentHTML}
+                </div>
+            `;
+
+            container.appendChild(win);
+            
+            if(appId === 'finder') updateFinderView('overview');
+
+            requestAnimationFrame(() => {
+                win.style.opacity = '1';
+                win.style.transform = 'scale(1)';
+            });
+
+            makeDraggable(win, document.getElementById(`header-${appId}`));
+            win.addEventListener('mousedown', () => bringToFront(appId));
+
+            if (appId === 'terminal') runTerminalEffect();
+        }
+
+        // --- Window Actions ---
+
+        function closeWindow(appId, e) {
+            if(e) e.stopPropagation();
+            const win = document.getElementById(`window-${appId}`);
+            if (win) {
+                win.style.transition = "all 0.2s ease-in";
+                win.style.opacity = '0';
+                win.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    win.remove();
+                    const dot = document.getElementById(`dot-${appId}`);
+                    if(dot) dot.style.opacity = '0';
+                }, 200);
+            }
+        }
+
+        function minimizeWindow(appId, e) {
+            if(e) e.stopPropagation();
+            const win = document.getElementById(`window-${appId}`);
+            if (win) {
+                win.classList.add('window-animating');
+                win.style.transform = 'translateY(100vh) scale(0.1)';
+                win.style.opacity = '0';
+                setTimeout(() => {
+                    win.style.display = 'none'; 
+                    win.classList.remove('window-animating');
+                }, 300);
+            }
+        }
+        
+        function restoreWindow(appId) {
+            const win = document.getElementById(`window-${appId}`);
+            if (win && win.style.display === 'none') {
+                win.style.display = 'flex';
+                void win.offsetWidth;
+                win.classList.add('window-animating');
+                win.style.transform = 'translateY(0) scale(1)';
+                win.style.opacity = '1';
+                setTimeout(() => {
+                    win.classList.remove('window-animating');
+                    bringToFront(appId);
+                }, 300);
+            }
+        }
+
+        function maximizeWindow(appId, e) {
+            if(e) e.stopPropagation();
+            const win = document.getElementById(`window-${appId}`);
+            if (!win) return;
+            
+            win.classList.add('window-animating');
+            
+            if (win.dataset.maximized === "true") {
+                // Restore
+                win.style.top = (win.dataset.prevTop || windows[appId].y) + 'px';
+                win.style.left = (win.dataset.prevLeft || windows[appId].x) + 'px';
+                win.style.width = (win.dataset.prevWidth || windows[appId].width) + 'px';
+                win.style.height = (win.dataset.prevHeight || windows[appId].height) + 'px';
+                win.style.borderRadius = '10px';
+                win.dataset.maximized = "false";
+            } else {
+                // Store previous state
+                win.dataset.prevTop = win.style.top;
+                win.dataset.prevLeft = win.style.left;
+                win.dataset.prevWidth = win.style.width;
+                win.dataset.prevHeight = win.style.height;
+
+                // Maximize Logic: Fit between Menu Bar (32px) and Dock (approx 96px + gap)
+                win.style.top = '32px'; 
+                win.style.left = '0';
+                win.style.width = '100%';
+                
+                // Dock is h-24 (96px) + pb-3 (12px) ~= 108px. Let's give it 110px bottom clearance.
+                const menuHeight = 32;
+                const dockHeight = 110;
+                win.style.height = `calc(100vh - ${menuHeight}px - ${dockHeight}px)`; 
+                
+                win.style.borderRadius = '0 0 10px 10px';
+                win.dataset.maximized = "true";
+            }
+            
+            setTimeout(() => {
+                win.classList.remove('window-animating');
+            }, 300);
+        }
+
+        function bringToFront(appId) {
+            const win = document.getElementById(`window-${appId}`);
+            if (win) {
+                win.style.zIndex = ++maxZIndex;
+            }
+        }
+        
+        // --- System Toggles ---
+        
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('theme-icon');
+            icon.className = isDarkMode ? "ph-fill ph-sun text-lg cursor-pointer hover:scale-110 transition-transform text-yellow-400" : "ph ph-moon text-lg cursor-pointer hover:scale-110 transition-transform";
+        }
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? '中' : 'En';
+            
+            // Re-render open windows to reflect language change
+            Object.keys(windows).forEach(appId => {
+                const win = document.getElementById(`window-${appId}`);
+                if(win) {
+                    // Update Title
+                    const titleEl = document.getElementById(`title-${appId}`);
+                    if(titleEl) titleEl.innerText = getTexts().windows[appId];
+                    
+                    // Update Content
+                    const bodyEl = document.getElementById(`body-${appId}`);
+                    if(bodyEl) {
+                        bodyEl.innerHTML = windows[appId].render();
+                        // Special init for finder
+                        if(appId === 'finder') updateFinderView(document.querySelector('.sidebar-item.active')?.id?.replace('nav-', '') || 'overview');
+                    }
+                }
+            });
+            
+            // Update Desktop Icons & Menu labels (Simple DOM update)
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const keys = key.split('.');
+                let val = getTexts();
+                keys.forEach(k => val = val[k]);
+                el.innerText = val;
+            });
+        }
+
+        // --- Finder Logic ---
+        function updateFinderView(view) {
+            const content = document.getElementById('finder-content');
+            const title = document.getElementById('finder-title');
+            if(!content) return;
+            
+            document.querySelectorAll('#finder-container .sidebar-item').forEach(el => el.classList.remove('active'));
+            const navItem = document.getElementById(`nav-${view}`);
+            if(navItem) navItem.classList.add('active');
+
+            const d = getData();
+            const t = getTexts().finder;
+            let html = "";
+            
+            switch(view) {
+                case 'overview':
+                    title.innerText = t.overview.title;
+                    html = `
+                        <div class="flex items-start gap-6 mb-8">
+                            <div class="w-24 h-24 rounded-full bg-gray-200 overflow-hidden shadow-inner flex-shrink-0">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold text-theme-primary mb-1">${d.profile.name}</h1>
+                                <p class="text-theme-secondary mb-3 text-base">${d.profile.role}</p>
+                                <div class="flex gap-4 text-sm text-theme-secondary">
+                                     <span class="flex items-center gap-1"><i class="ph-fill ph-phone"></i> ${d.profile.phone}</span>
+                                     <span class="flex items-center gap-1"><i class="ph-fill ph-envelope"></i> ${d.profile.email}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-theme-sidebar p-6 rounded-xl border border-theme">
+                            <h3 class="text-sm font-bold text-theme-secondary uppercase tracking-wider mb-3">${t.overview.intro}</h3>
+                            <p class="text-theme-primary leading-relaxed">${d.profile.summary}</p>
+                        </div>
+                        <div class="mt-6">
+                            <h3 class="text-sm font-bold text-theme-secondary uppercase tracking-wider mb-3">${t.overview.strength}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${d.profile.advantages.slice(0,4).map(adv => `
+                                    <div class="flex gap-2 items-start p-3 bg-theme-window border border-theme rounded-lg shadow-sm">
+                                        <i class="ph-fill ph-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+                                        <span class="text-xs text-theme-secondary">${adv}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                    break;
+                case 'education':
+                    title.innerText = t.edu.title;
+                    html = `
+                         <h2 class="text-2xl font-bold mb-6">${t.edu.title}</h2>
+                         <div class="space-y-6">
+                            ${d.education.map(edu => `
+                                <div class="flex gap-4 items-start border-b border-theme pb-6 last:border-0">
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-300 font-bold text-xl">
+                                        ${edu.school[0]}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <h3 class="text-lg font-bold text-theme-primary">${edu.school}</h3>
+                                            <span class="bg-theme-sidebar text-theme-secondary px-2 py-1 rounded text-xs font-mono">${edu.year}</span>
+                                        </div>
+                                        <div class="text-blue-600 dark:text-blue-400 font-medium mb-2">${edu.degree}</div>
+                                        <p class="text-sm text-theme-secondary leading-relaxed">${edu.details}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                         </div>`;
+                    break;
+                case 'experience':
+                    title.innerText = t.exp.title;
+                    html = `
+                        <h2 class="text-2xl font-bold mb-6">${t.exp.title}</h2>
+                        <div class="space-y-8">
+                            ${d.experience.map(exp => `
+                                <div class="relative pl-6 border-l-2 border-gray-200 dark:border-gray-700">
+                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-white dark:border-gray-800"></div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-theme-primary">${exp.company}</h3>
+                                            <div class="text-blue-600 dark:text-blue-400">${exp.role}</div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 font-mono">${exp.date}</span>
+                                    </div>
+                                    <ul class="space-y-2 mt-3">
+                                        ${exp.details.map(det => `
+                                            <li class="text-sm text-theme-secondary flex gap-2 items-start">
+                                                <span class="text-gray-400 mt-1">•</span>
+                                                <span class="flex-1">${marked.parseInline(det)}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>`;
+                    break;
+                case 'skills':
+                    title.innerText = t.skill.title;
+                    html = `
+                         <h2 class="text-2xl font-bold mb-6">${t.skill.title}</h2>
+                         <div class="grid gap-4">
+                            ${d.skills.map(skill => `
+                                <div class="bg-theme-sidebar p-4 rounded-xl border border-theme">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-bold text-theme-primary">${skill.name}</span>
+                                        <i class="ph-fill ph-check-circle text-blue-500"></i>
+                                    </div>
+                                    <div class="text-sm text-theme-secondary">${skill.level}</div>
+                                </div>
+                            `).join('')}
+                         </div>`;
+                    break;
+            }
+            content.innerHTML = html;
+        }
+
+        // --- Draggable ---
+        function makeDraggable(element, handle) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            handle.onmousedown = dragMouseDown;
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.zIndex = ++maxZIndex;
+                if (element.dataset.maximized === "true") return;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // --- Gemini AI ---
+        function sendGeminiMessage() {
+            const input = document.getElementById('gemini-input');
+            const chatArea = document.getElementById('gemini-chat-area');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const userBubble = document.createElement('div');
+            userBubble.className = 'flex gap-3 justify-end';
+            userBubble.innerHTML = `
+                <div class="chat-bubble-user px-4 py-2 text-sm shadow-sm max-w-[85%]">${text}</div>
+                <div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male">
+                </div>`;
+            chatArea.appendChild(userBubble);
+            input.value = '';
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            const aiLoadingBubble = document.createElement('div');
+            aiLoadingBubble.id = loadingId;
+            aiLoadingBubble.className = 'flex gap-3 mt-4';
+            aiLoadingBubble.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0"><i class="ph-fill ph-sparkle"></i></div>
+                <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm"><div class="flex gap-1 h-5 items-center"><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-200"></div></div></div>`;
+            chatArea.appendChild(aiLoadingBubble);
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            setTimeout(() => {
+                document.getElementById(loadingId).remove();
+                const response = generateAIResponse(text);
+                const aiBubble = document.createElement('div');
+                aiBubble.className = 'flex gap-3 animate-fade-in';
+                aiBubble.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0"><i class="ph-fill ph-sparkle"></i></div>
+                    <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm max-w-[85%] prose prose-sm dark:prose-invert">${marked.parse(response)}</div>`;
+                chatArea.appendChild(aiBubble);
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 800 + Math.random() * 500);
+        }
+
+        function generateAIResponse(query) {
+            const q = query.toLowerCase();
+            const d = getData();
+            let foundInfo = [];
+            
+            // Basic matching logic (simple for demo)
+            if (q.includes("蓝芯") || q.includes("lanxin")) {
+                 const exp = d.experience.find(e => e.company.includes("Lanxin") || e.company.includes("蓝芯"));
+                 if(exp) foundInfo.push(`@ ${exp.company}: \n${exp.details.join('\n')}`);
+            }
+            if (q.includes("english") || q.includes("英语")) {
+                foundInfo.push(d.skills.find(s => s.name.includes("English") || s.name.includes("英语")).level);
+            }
+            
+            if (foundInfo.length === 0) return currentLang === 'zh' ? "抱歉，我没有在简历中找到相关信息。你可以问我关于工作经历、技能或教育背景的问题。" : "Sorry, I couldn't find specific info in the resume. Ask me about experience, skills or education.";
+            
+            return foundInfo.join("\n\n");
+        }
+
+        // --- Terminal ---
+        function runTerminalEffect() {
+            const container = document.getElementById('typewriter-area');
+            const inputLine = document.getElementById('terminal-input-line');
+            if(!container) return;
+            container.innerHTML = '';
+            inputLine.classList.add('hidden');
+            const commands = [
+                { text: "System check: MeiOS Kernel v14.0.1... [OK]", delay: 200 },
+                { text: "Mounting file system: /User/MeiHanbin... [OK]", delay: 500 },
+                { text: "----------------------------------------", delay: 800 },
+                { text: "> Loading module: Market_Analysis_Engine... [Loaded]", delay: 1100 },
+                { text: "> Loading module: Creative_Design_Suite... [Loaded]", delay: 1500 },
+                { text: "All systems operational.", delay: 2000 }
+            ];
+            commands.forEach(line => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = "mb-1";
+                    div.textContent = line.text;
+                    container.appendChild(div);
+                    container.scrollTop = container.scrollHeight;
+                }, line.delay);
+            });
+            setTimeout(() => {
+                inputLine.classList.remove('hidden');
+                document.getElementById('term-input').focus();
+            }, 2200);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('clock').innerText = `${dateStr} ${timeStr}`;
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setInterval(updateClock, 1000);
+            updateClock();
+            setTimeout(() => openWindow('finder'), 500);
+        });
+
+    </script>
+</body>
+</html>
