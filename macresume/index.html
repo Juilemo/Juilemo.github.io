@@ -1,1392 +1,1306 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>梅汉斌 - 个人主页 (MeiOS)</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Markdown Parser for Gemini responses -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Mei Hanbin - Portfolio</title>
     
-    <style>
-        /* Custom Font Setup */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
-
-        :root {
-            --bg-window: #ffffff;
-            --bg-sidebar: rgba(243, 244, 246, 0.9);
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --terminal-bg: #1e1e1e;
-        }
-
-        body.dark-mode {
-            --bg-window: #1f2937; /* Gray 800 */
-            --bg-sidebar: rgba(17, 24, 39, 0.9); /* Gray 900 */
-            --text-primary: #f3f4f6; /* Gray 100 */
-            --text-secondary: #9ca3af; /* Gray 400 */
-            --border-color: #374151; /* Gray 700 */
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: color 0.3s, background-color 0.3s;
-        }
-
-        /* Wallpapers */
-        .bg-wallpaper {
-            background: url('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80') no-repeat center center fixed;
-            background-size: cover;
-            transition: filter 0.5s;
-        }
-        
-        body.dark-mode .bg-wallpaper {
-            filter: brightness(0.6);
-        }
-
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        
-        body.dark-mode .glass {
-            background: rgba(0, 0, 0, 0.65);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        /* Dock Animation */
-        .dock-container {
-            transition: transform 0.2s;
-        }
-        .dock-icon {
-            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: bottom;
-        }
-        .dock-icon:hover {
-            transform: scale(1.2) translateY(-10px);
-            margin: 0 10px;
-        }
-        
-        /* Window Styles */
-        .window {
-            transition: opacity 0.2s, width 0.3s, height 0.3s, transform 0.2s; 
-            box-shadow: 0 0px 15px rgba(0,0,0,0.1), 0 20px 50px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            background-color: var(--bg-window);
-            color: var(--text-primary);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        body.dark-mode .window {
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .window-animating {
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        /* Common Scrollbar */
-        .window-content {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0,0,0,0.2) transparent;
-        }
-        .window-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .window-content::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 4px;
-        }
-        body.dark-mode .window-content::-webkit-scrollbar-thumb {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        /* Sidebar Selection Style */
-        .sidebar-item {
-            border-radius: 6px;
-            transition: background-color 0.1s;
-            color: var(--text-secondary);
-        }
-        .sidebar-item:hover {
-            background-color: rgba(0,0,0,0.05);
-        }
-        body.dark-mode .sidebar-item:hover {
-            background-color: rgba(255,255,255,0.1);
-        }
-        .sidebar-item.active {
-            background-color: rgba(0,0,0,0.1);
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-        body.dark-mode .sidebar-item.active {
-            background-color: rgba(255,255,255,0.15);
-        }
-
-        /* Chat Bubbles */
-        .chat-bubble-user {
-            background-color: #007AFF;
-            color: white;
-            border-radius: 18px 18px 4px 18px;
-        }
-        .chat-bubble-ai {
-            background-color: #E9E9EB;
-            color: black;
-            border-radius: 18px 18px 18px 4px;
-        }
-        body.dark-mode .chat-bubble-ai {
-            background-color: #374151;
-            color: white;
-        }
-        
-        /* A4 Paper */
-        .a4-paper {
-            background: white;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            margin: 20px auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            color: #333;
-            font-size: 14px;
-            line-height: 1.6;
-            transition: none; /* Paper always stays white */
-        }
-
-        /* Terminal Cursor */
-        .cursor-blink {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        /* Mobile Handling */
-        @media (max-width: 768px) {
-            .window {
-                width: 100% !important;
-                height: calc(100% - 80px) !important;
-                top: 30px !important;
-                left: 0 !important;
-                border-radius: 0 0 10px 10px;
-            }
-            .a4-paper {
-                width: 100%;
-                padding: 15px;
-                min-height: auto;
-            }
-            .hide-on-mobile {
-                display: none;
-            }
-        }
-        
-        /* Utility for dark mode text */
-        .text-theme-primary { color: var(--text-primary); }
-        .text-theme-secondary { color: var(--text-secondary); }
-        .bg-theme-window { background-color: var(--bg-window); }
-        .bg-theme-sidebar { background-color: var(--bg-sidebar); }
-        .border-theme { border-color: var(--border-color); }
-
-    </style>
-</head>
-<body class="bg-wallpaper h-screen w-screen overflow-hidden text-gray-800 font-sans">
-
-    <!-- Desktop Environment -->
-    <div id="desktop" class="h-full w-full flex flex-col">
-        
-        <!-- Menu Bar -->
-        <div class="h-8 w-full glass flex items-center justify-between px-4 text-sm font-medium z-50 select-none shadow-sm backdrop-blur-xl">
-            <div class="flex items-center gap-5">
-                <i class="ph-fill ph-apple-logo text-lg cursor-pointer hover:opacity-70"></i>
-                <span class="font-bold cursor-pointer hidden sm:block">MeiOS</span>
-                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.file">文件</span>
-                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.edit">编辑</span>
-                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.view">查看</span>
-                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.window">窗口</span>
-                <span class="cursor-pointer hover:opacity-70 hidden sm:block" data-i18n="menu.help">帮助</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <!-- Theme Toggle -->
-                <i class="ph ph-moon text-lg cursor-pointer hover:scale-110 transition-transform" onclick="toggleTheme()" id="theme-icon" title="Toggle Dark Mode"></i>
-                
-                <!-- Language Toggle -->
-                <div class="flex items-center cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 px-2 rounded transition-colors" onclick="toggleLanguage()">
-                    <i class="ph ph-globe text-lg mr-1"></i>
-                    <span class="text-xs font-bold" id="lang-indicator">中</span>
-                </div>
-
-                <div class="w-[1px] h-4 bg-gray-400/50"></div>
-
-                <div class="flex items-center gap-2">
-                     <i class="ph ph-battery-charging-vertical text-lg"></i>
-                     <span class="text-xs">100%</span>
-                </div>
-                <i class="ph ph-wifi-high text-lg"></i>
-                <i class="ph ph-magnifying-glass text-lg cursor-pointer"></i>
-                <span id="clock" class="w-32 text-right font-medium"></span>
-            </div>
-        </div>
-
-        <!-- Desktop Area -->
-        <div class="flex-1 relative p-4" id="desktop-area">
-            
-            <!-- Desktop Icons -->
-            <div class="flex flex-col gap-6 w-24 absolute right-4 top-4 items-end">
-                 <!-- Resume PDF -->
-                 <div onclick="openWindow('preview')" class="flex flex-col items-center gap-1 group cursor-pointer w-20">
-                    <div class="w-16 h-20 bg-white rounded flex items-center justify-center shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform border border-gray-200">
-                        <div class="absolute top-0 right-0 w-5 h-5 bg-gray-100 -mr-2 -mt-2 rotate-45 border-b border-l border-gray-200"></div>
-                        <span class="text-[9px] font-bold text-red-500 absolute top-2 left-2">PDF</span>
-                        <i class="ph-fill ph-file-text text-4xl text-gray-300 mt-2"></i>
-                        <div class="absolute bottom-2 text-[6px] text-gray-400 w-full text-center">Resume</div>
-                    </div>
-                    <span class="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded shadow-sm text-center leading-tight" data-i18n="desktop.pdf">我的简历.pdf</span>
-                </div>
-
-                <!-- Folder -->
-                <div onclick="openWindow('finder')" class="flex flex-col items-center gap-1 group cursor-pointer w-20">
-                    <div class="w-16 h-16 bg-blue-400 rounded-xl flex items-center justify-center shadow-lg group-hover:bg-blue-300 transition-colors border border-blue-300/50">
-                        <div class="bg-white w-8 h-8 rounded-full flex items-center justify-center mb-1">
-                             <i class="ph-fill ph-user text-blue-500 text-lg"></i>
-                        </div>
-                    </div>
-                    <span class="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded shadow-sm text-center" data-i18n="desktop.folder">个人资料</span>
-                </div>
-            </div>
-
-            <!-- Windows Container -->
-            <div id="windows-container"></div>
-
-        </div>
-
-        <!-- Dock -->
-        <div class="h-24 w-full flex justify-center items-end pb-3 z-50 pointer-events-none">
-            <div class="glass px-3 py-3 rounded-2xl flex items-end gap-3 mb-2 shadow-2xl border-white/20 border pointer-events-auto bg-white/30 backdrop-blur-2xl dock-container">
-                
-                <!-- Finder -->
-                <div onclick="openWindow('finder')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-b from-blue-100 to-blue-50"></div>
-                    <div class="relative w-full h-full flex items-center justify-center">
-                        <i class="ph-fill ph-smiley text-4xl text-blue-600"></i>
-                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
-                    </div>
-                    <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-finder"></div>
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Finder</div>
-                </div>
-
-                <!-- Safari -->
-                <div onclick="openWindow('safari')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" class="w-10 h-10 object-contain" alt="Safari">
-                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-safari"></div>
-                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Safari</div>
-                </div>
-
-                <!-- Terminal -->
-                <div onclick="openWindow('terminal')" class="dock-icon w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group border border-gray-600">
-                     <div class="text-white font-mono font-bold text-xs">>_</div>
-                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-terminal"></div>
-                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Terminal</div>
-                </div>
-                
-                 <!-- Gemini AI Icon -->
-                <div onclick="openWindow('gemini')" class="dock-icon w-12 h-12 bg-white rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group border border-blue-100 overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 via-purple-500 to-red-400 opacity-20"></div>
-                    <i class="ph-fill ph-sparkle text-3xl text-purple-600"></i>
-                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-gemini"></div>
-                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Gemini AI</div>
-                </div>
-
-                <!-- Mail -->
-                <div onclick="openWindow('mail')" class="dock-icon w-12 h-12 bg-sky-500 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
-                    <i class="ph-fill ph-envelope text-3xl text-white"></i>
-                     <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-mail"></div>
-                     <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Mail</div>
-                </div>
-                
-                 <div class="w-[1px] h-10 bg-gray-400/50 mx-1 self-center"></div>
-
-                <!-- PDF -->
-                <div onclick="openWindow('preview')" class="dock-icon w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer shadow-md relative group">
-                    <i class="ph-fill ph-file-pdf text-3xl text-red-500"></i>
-                    <div class="absolute -bottom-2 w-1 h-1 bg-black/60 rounded-full opacity-0 app-dot" id="dot-preview"></div>
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Preview</div>
-                </div>
-                
-                <div onclick="window.open('https://github.com/topics/resume', '_blank')" class="dock-icon w-12 h-12 bg-black rounded-full flex items-center justify-center cursor-pointer shadow-md relative group" title="Github">
-                    <i class="ph-fill ph-github-logo text-3xl text-white"></i>
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">GitHub</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Application Logic -->
+    <!-- 1. 样式库 (Tailwind CSS) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // --- State Management ---
-        let currentLang = 'zh'; // 'zh' or 'en'
-        let isDarkMode = false;
-
-        // --- Translations ---
-        const i18n = {
-            zh: {
-                menu: { file: "文件", edit: "编辑", view: "查看", window: "窗口", help: "帮助" },
-                desktop: { pdf: "我的简历.pdf", folder: "个人资料" },
-                windows: {
-                    finder: "个人资料 - 梅汉斌",
-                    safari: "工作经历 - Safari",
-                    terminal: "user@MeiOS: ~",
-                    gemini: "Gemini AI 面试助手",
-                    mail: "邮件 (Mail)",
-                    preview: "我的简历.pdf"
-                },
-                finder: {
-                    sidebar: {
-                        info: "个人信息",
-                        overview: "概览",
-                        education: "教育背景",
-                        experience: "工作经历",
-                        skills: "专业技能",
-                        location: "位置",
-                        desktop: "桌面",
-                        download: "下载"
-                    },
-                    overview: {
-                        title: "个人概览",
-                        intro: "个人简介",
-                        strength: "核心优势"
-                    },
-                    edu: { title: "教育背景" },
-                    exp: { title: "工作经历" },
-                    skill: { title: "专业技能" }
-                },
-                gemini: {
-                    title: "Gemini 助手",
-                    subtitle: "全能问答：基于简历内容",
-                    intro: "你好！我是梅汉斌的 AI 面试助手。<br>你可以问我任何简历上的细节，例如：<br>“他在蓝芯负责什么？”<br>“他的英语水平怎么样？”",
-                    placeholder: "输入问题..."
-                }
-            },
-            en: {
-                menu: { file: "File", edit: "Edit", view: "View", window: "Window", help: "Help" },
-                desktop: { pdf: "Resume.pdf", folder: "Profile" },
-                windows: {
-                    finder: "Profile - Mei Hanbin",
-                    safari: "Experience - Safari",
-                    terminal: "user@MeiOS: ~",
-                    gemini: "Gemini AI Assistant",
-                    mail: "Mail",
-                    preview: "Resume.pdf"
-                },
-                finder: {
-                    sidebar: {
-                        info: "Info",
-                        overview: "Overview",
-                        education: "Education",
-                        experience: "Experience",
-                        skills: "Skills",
-                        location: "Locations",
-                        desktop: "Desktop",
-                        download: "Downloads"
-                    },
-                    overview: {
-                        title: "Overview",
-                        intro: "Summary",
-                        strength: "Core Strengths"
-                    },
-                    edu: { title: "Education" },
-                    exp: { title: "Experience" },
-                    skill: { title: "Skills" }
-                },
-                gemini: {
-                    title: "Gemini Assistant",
-                    subtitle: "Ask anything about the resume",
-                    intro: "Hello! I am Mei Hanbin's AI Assistant.<br>Ask me anything, e.g.:<br>'What did he do at Lanxin?'<br>'How is his English?'",
-                    placeholder: "Type a question..."
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
                 }
             }
-        };
+        }
+    </script>
 
-        // --- Data: Mei Hanbin's Resume Content (Bilingual) ---
-        const resumeData = {
+    <!-- 2. 图标库 (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- 3. Markdown 解析 (Marked) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- 4. React 核心库 -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 5. Babel (用于在浏览器中编译 JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.8);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        /* 动画缓动函数 */
+        .ease-spring {
+            transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ease-ios {
+            transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        
+        /* Markdown 样式修正 */
+        .markdown-content ul { list-style-type: disc; margin-left: 1.5em; }
+        .markdown-content ol { list-style-type: decimal; margin-left: 1.5em; }
+        .markdown-content p { margin-bottom: 0.5em; }
+        .markdown-content strong { font-weight: 700; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "react": "https://esm.sh/react@^19.2.1"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- 主程序逻辑 -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- 1. 数据 (Constants) - 包含真实个人信息 ---
+        const RESUME_DATA = {
             zh: {
                 profile: {
-                    name: "梅汉斌",
-                    role: "市场部海外市场实习生 | 英语专业八级",
-                    phone: "15221364583",
-                    email: "meihanbin@qq.com",
-                    summary: "具备敏锐的市场洞察力与跨文化沟通能力。擅长结合政策导向与行业趋势进行市场调研，拥有丰富的跨平台内容运营与产品宣传经验。熟练使用AI工具优化工作流，致力于通过多语言内容助力产品全球化推广。",
-                    advantages: [
-                        "具备市场调研与竞品分析能力，能够结合政策导向与行业趋势，快速形成有针对性的分析报告。",
-                        "拥有跨平台内容运营与产品宣传经验，能够提炼产品卖点，设计多语言宣传资料。",
-                        "具备跨部门沟通与项目协同能力，能够推动产品方案优化和资料落地。",
-                        "熟练使用Figma、Canva、AI工具，提高文档编制与方案设计效率。",
-                        "英语专业八级良好，能够独立完成中英文资料翻译与撰写。"
-                    ]
+                name: "梅汉斌",
+                role: "市场部海外市场实习生 | 英语专业八级",
+                phone: "15221364583",
+                email: "meihanbin@qq.com",
+                summary: "具备敏锐的市场洞察力与跨文化沟通能力。擅长结合政策导向与行业趋势进行市场调研，拥有丰富的跨平台内容运营与产品宣传经验。熟练使用AI工具优化工作流，致力于通过多语言内容助力产品全球化推广。",
+                advantages: [
+                    "**市场调研与竞品分析**：能够结合政策导向与行业趋势，快速形成有针对性的分析报告，为产品规划和战略布局提供支持。",
+                    "**跨平台内容运营**：能够从用户需求出发，提炼产品卖点，设计多语言宣传资料和解决方案文档，提升品牌传播力。",
+                    "**跨部门沟通与协同**：能够在设计、研发、销售之间高效对接，推动产品方案优化和资料落地，形成系统化的知识库。",
+                    "**工具技能**：熟练使用 Figma、Canva、AI 工具，提高文档编制与方案设计效率。",
+                    "**语言能力**：英语专业八级（良好），专业四级，能够独立完成中英文资料翻译与撰写。"
+                ]
                 },
                 education: [
-                    { school: "青岛科技大学", degree: "出版硕士", year: "2023.09 - 2026.07", details: "多次参与策划图书选题,并进行市场调研与数据分析，寻找符合市场需求的出版产品。能够运用PS，ID进行设计和排版，能够制作H5宣传页面。" },
-                    { school: "浙大宁波理工学院", degree: "英语本科", year: "2019.08 - 2023.06", details: "主修综合英语、英美文化、商务英语沟通、跨境电商、国际营销、商务英语翻译等课程，英语基础扎实。" }
+                { school: "青岛科技大学", degree: "出版硕士", year: "2023.09 - 2026.07", details: "多次参与策划图书选题,并进行市场调研与数据分析，寻找符合市场需求的出版产品。" },
+                { school: "浙大宁波理工学院", degree: "英语本科", year: "2019.08 - 2023.06", details: "主修综合英语、英美文化、商务英语沟通、跨境电商、国际营销、商务英语翻译等课程。" }
                 ],
                 experience: [
-                    {
-                        company: "杭州蓝芯科技有限公司",
-                        role: "市场部－海外市场实习生",
-                        location: "浙江杭州",
-                        date: "2024.07 - 2025.01",
-                        details: [
-                            "**市场调研与竞品分析**：利用SEMrush收集数据，输出调研报告，提炼产品差异化卖点。",
-                            "**SEO与网站运营**：使用 Google Analytics 跟踪流量，优化关键词策略，使用HubSpot进行营销自动化。",
-                            "**品牌传播**：运营YouTube、LinkedIn及国内B站（视频发布26个，浏览量提升200%）。",
-                            "**宣传资料设计**：熟练使用设计工具进行画册、海报排版，提升产品亮点呈现。",
-                            "**知识库管理**：搭建飞书官方中英文知识库，统一管理技术与销售文档。"
-                        ]
-                    },
-                    {
-                        company: "赛轮集团股份有限公司",
-                        role: "人资中心－翻译实习生",
-                        location: "山东青岛",
-                        date: "2025.03 - 2025.06",
-                        details: [
-                            "**培训文档翻译**：负责公司培训类文档的中英文翻译，确保术语准确。",
-                            "**AI驱动翻译流程**：自主搭建“大模型翻译—智能校对—自动审核”流程，提升效率。",
-                            "**跨部门协作**：协助HR团队进行候选人资料处理与面试沟通。"
-                        ]
-                    }
+                {
+                    company: "杭州蓝芯科技有限公司",
+                    role: "市场部－海外市场实习生",
+                    location: "浙江杭州",
+                    date: "2024.07 - 2025.01",
+                    details: [
+                    "**市场调研与竞品分析**：协助领导调研国内外机器人及 3D 视觉传感器行业趋势。利用 SEMrush 收集竞品数据，输出调研报告，为产品设计与市场定位提供参考。",
+                    "**SEO 与网站运营**：使用 Google Analytics 跟踪流量与转化，监控重点页面数据。制定关键词策略，优化网站结构与文案，提升搜索排名。使用 HubSpot 进行营销自动化。",
+                    "**多平台品牌传播**：开拓海外 YouTube、LinkedIn 平台，运营官网 News 板块。共制作发布 B 站视频 26 个（浏览量提升 200%）、YouTube 视频 21 个，撰写多篇 LinkedIn 文章（账号关注提升 350%）。",
+                    "**产品解决方案与宣传资料**：策划编写新品发布画册、海报与文案。独立使用设计工具进行宣传资料排版与网站改版初稿设计。",
+                    "**知识库管理**：推动飞书知识库应用，统一管理技术、销售及产品文档，搭建官方中英文知识库对外开放。",
+                    "**跨部门协同**：翻译校对产品技术文稿，输出双语资料，支持销售工作。"
+                    ]
+                },
+                {
+                    company: "赛轮集团股份有限公司",
+                    role: "人资中心－翻译实习生",
+                    location: "山东青岛",
+                    date: "2025.03 - 2025.06",
+                    details: [
+                    "**培训文档翻译与优化**：负责公司培训类文档的中英文翻译，熟悉行业专业术语，确保翻译内容准确、专业。",
+                    "**AI 驱动的翻译流程设计**：自主搭建“大模型翻译—智能校对—自动审核—人工终审”流程，提升翻译效率与质量。",
+                    "**跨部门协作**：参与相关岗位面试流程，协助人力资源团队进行候选人资料处理与面试沟通。"
+                    ]
+                },
                 ],
                 skills: [
-                    { name: "英语能力", level: "TEM-8 (良好), TEM-4" },
-                    { name: "设计工具", level: "Figma, Canva, Photoshop, InDesign" },
-                    { name: "数据分析", level: "SEMrush, Google Analytics" },
-                    { name: "办公/AI", level: "Microsoft Office, AI Prompting, HubSpot" },
-                    { name: "新媒体运营", level: "LinkedIn, YouTube, Bilibili, 知乎" }
+                { name: "语言能力", level: "英语专八 (TEM-8) 良好, 专四 (TEM-4)" },
+                { name: "设计/办公", level: "Figma, Canva, Photoshop, H5, Office" },
+                { name: "数据/营销", level: "SEMrush, Google Analytics, HubSpot" },
+                { name: "新媒体运营", level: "YouTube, LinkedIn, Bilibili, 知乎, CSDN" },
+                { name: "AI 应用", level: "LLM Workflow Design, Prompt Engineering" }
                 ]
             },
             en: {
-                 profile: {
-                    name: "Mei Hanbin",
-                    role: "Overseas Marketing Intern | TEM-8 Certified",
-                    phone: "15221364583",
-                    email: "meihanbin@qq.com",
-                    summary: "Possesses acute market insight and cross-cultural communication skills. Skilled in market research combining policy trends, with extensive experience in cross-platform content operation and product promotion. Proficient in using AI tools to optimize workflows.",
-                    advantages: [
-                        "Market research & competitor analysis skills, forming targeted reports based on trends.",
-                        "Cross-platform content operation & product promotion experience.",
-                        "Cross-departmental communication & project collaboration skills.",
-                        "Proficient in Figma, Canva, AI tools for document preparation & design.",
-                        "TEM-8 Certified (Good), capable of independent Chinese-English translation."
-                    ]
+                profile: {
+                name: "Mei Hanbin",
+                role: "Overseas Marketing Intern | TEM-8",
+                phone: "15221364583",
+                email: "meihanbin@qq.com",
+                summary: "Possess acute market insight and cross-cultural communication skills. Skilled in market research combining policy trends, with extensive experience in cross-platform content operation and product promotion. Proficient in using AI tools to optimize workflows.",
+                advantages: [
+                    "**Market Research**: Capable of forming targeted analysis reports based on policy trends and industry trends.",
+                    "**Content Operation**: Experienced in extracting product selling points and designing multi-language promotional materials.",
+                    "**Collaboration**: Efficiently coordinate between design, R&D, and sales departments to drive product solutions.",
+                    "**Tools**: Proficient in Figma, Canva, AI tools, Photoshop.",
+                    "**Language**: TEM-8 (Good), TEM-4. Capable of independent Chinese-English translation and writing."
+                ]
                 },
                 education: [
-                    { school: "Qingdao University of Science and Technology", degree: "Master of Publishing", year: "2023.09 - 2026.07", details: "Participated in book topic planning, market research & data analysis. Skilled in PS, ID for design and layout." },
-                    { school: "NingboTech University", degree: "BA in English", year: "2019.08 - 2023.06", details: "Majored in Comprehensive English, Anglo-American Culture, Business Communication, Cross-border E-commerce, etc." }
+                { school: "Qingdao University of Science & Tech", degree: "Master of Publishing", year: "2023.09 - 2026.07", details: "Book topic planning, market research & data analysis for publishing products." },
+                { school: "NingboTech University", degree: "BA in English", year: "2019.08 - 2023.06", details: "Comprehensive English, Business Communication, International Marketing, Translation." }
                 ],
                 experience: [
-                    {
-                        company: "Hangzhou Lanxin Technology Co., Ltd.",
-                        role: "Overseas Marketing Intern",
-                        location: "Hangzhou, Zhejiang",
-                        date: "2024.07 - 2025.01",
-                        details: [
-                            "**Market Research**: Used SEMrush for data collection and competitor analysis.",
-                            "**SEO & Web Ops**: Tracked traffic via Google Analytics, optimized keywords, used HubSpot for automation.",
-                            "**Brand Communication**: Managed YouTube, LinkedIn & Bilibili (Views up 200%).",
-                            "**Material Design**: Designed brochures and posters to highlight product features.",
-                            "**Knowledge Base**: Built official Chinese-English knowledge base using Lark."
-                        ]
-                    },
-                    {
-                        company: "Sailun Group Co., Ltd.",
-                        role: "HR Translation Intern",
-                        location: "Qingdao, Shandong",
-                        date: "2025.03 - 2025.06",
-                        details: [
-                            "**Translation**: Translated training documents ensuring terminological accuracy.",
-                            "**AI Workflow**: Built 'LLM Translation - Smart Proofreading - Auto Audit' workflow.",
-                            "**Collaboration**: Assisted HR with candidate data processing and communication."
-                        ]
-                    }
+                {
+                    company: "Hangzhou Lanxin Technology Co., Ltd.",
+                    role: "Overseas Marketing Intern",
+                    location: "Hangzhou",
+                    date: "2024.07 - 2025.01",
+                    details: [
+                    "**Market Research**: Researched robot & 3D visual sensor industry trends. Used SEMrush for competitor analysis and reports.",
+                    "**SEO & Web Ops**: Used Google Analytics and HubSpot. Optimized keywords and site structure to improve search rankings.",
+                    "**Brand Communication**: Managed YouTube & LinkedIn. Published 26 Bilibili videos (+200% views) and 21 YouTube videos. LinkedIn followers +350%.",
+                    "**Product Materials**: Planned and wrote brochures, posters, and copy. Designed promotional materials and website drafts.",
+                    "**Knowledge Base**: Promoted Feishu/Lark knowledge base, managing technical and sales docs.",
+                    "**Collaboration**: Translated technical documents into bilingual materials for sales support."
+                    ]
+                },
+                {
+                    company: "Sailun Group Co., Ltd.",
+                    role: "HR Translation Intern",
+                    location: "Qingdao",
+                    date: "2025.03 - 2025.06",
+                    details: [
+                    "**Translation**: Responsible for translating training documents (CN-EN), ensuring professional terminology accuracy.",
+                    "**AI Workflow**: Built an 'LLM Translation - Smart Proofreading - Auto Review - Human Audit' workflow to improve efficiency.",
+                    "**Collaboration**: Assisted HR team with candidate data processing and interview communication."
+                    ]
+                }
                 ],
                 skills: [
-                    { name: "English", level: "TEM-8 (Good), TEM-4" },
-                    { name: "Design", level: "Figma, Canva, Photoshop, InDesign" },
-                    { name: "Data", level: "SEMrush, Google Analytics" },
-                    { name: "Office/AI", level: "Microsoft Office, AI Prompting, HubSpot" },
-                    { name: "Media Ops", level: "LinkedIn, YouTube, Bilibili" }
+                { name: "Language", level: "TEM-8 (Good), TEM-4" },
+                { name: "Design", level: "Figma, Canva, Photoshop, H5" },
+                { name: "Analytics", level: "SEMrush, Google Analytics, HubSpot" },
+                { name: "Media", level: "YouTube, LinkedIn, Bilibili" },
+                { name: "AI Tools", level: "LLM Workflows, Prompting" }
                 ]
             }
         };
 
-        // --- Helpers to get current data ---
-        function getData() { return resumeData[currentLang]; }
-        function getTexts() { return i18n[currentLang]; }
+        // --- 2. 应用组件 (Apps) ---
 
-        // --- Window Management System ---
-        let maxZIndex = 10;
-        
-        // Window Definitions with optimized layout
-        const windows = {
-            finder: {
-                id: 'finder',
-                width: 800,
-                height: 550,
-                x: 80,
-                y: 60,
-                render: () => {
-                    const d = getData();
-                    const t = getTexts().finder;
-                    return `
-                    <div class="flex h-full bg-theme-window text-sm" id="finder-container">
-                        <!-- Finder Sidebar -->
-                        <div class="w-48 bg-theme-sidebar backdrop-blur border-r border-theme flex flex-col pt-3 pb-4 select-none">
-                            <div class="px-2 mb-2 text-[11px] font-semibold text-theme-secondary pl-4">${t.sidebar.info}</div>
-                            <div onclick="updateFinderView('overview')" class="sidebar-item active mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-overview">
-                                <i class="ph-fill ph-user text-blue-500"></i> ${t.sidebar.overview}
-                            </div>
-                            <div onclick="updateFinderView('education')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-education">
-                                <i class="ph-fill ph-graduation-cap text-gray-500"></i> ${t.sidebar.education}
-                            </div>
-                            <div onclick="updateFinderView('experience')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-experience">
-                                <i class="ph-fill ph-briefcase text-gray-500"></i> ${t.sidebar.experience}
-                            </div>
-                            <div onclick="updateFinderView('skills')" class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer" id="nav-skills">
-                                <i class="ph-fill ph-lightning text-gray-500"></i> ${t.sidebar.skills}
-                            </div>
-                            
-                            <div class="mt-4 px-2 mb-2 text-[11px] font-semibold text-theme-secondary pl-4">${t.sidebar.location}</div>
-                            <div class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer">
-                                <i class="ph-fill ph-desktop text-gray-500"></i> ${t.sidebar.desktop}
-                            </div>
-                            <div class="sidebar-item mx-2 px-3 py-1.5 flex items-center gap-2 cursor-pointer">
-                                <i class="ph-fill ph-download-simple text-gray-500"></i> ${t.sidebar.download}
-                            </div>
-                        </div>
-                        
-                        <!-- Main Content Area -->
-                        <div class="flex-1 bg-theme-window overflow-y-auto flex flex-col">
-                             <!-- Navigation Toolbar -->
-                            <div class="h-12 border-b border-theme flex items-center px-4 gap-4 sticky top-0 bg-theme-window/95 backdrop-blur z-10 justify-between">
-                                <div class="flex gap-2 text-theme-secondary">
-                                    <i class="ph ph-caret-left hover:text-theme-primary cursor-pointer"></i>
-                                    <i class="ph ph-caret-right hover:text-theme-primary cursor-pointer"></i>
-                                    <span class="font-bold text-theme-primary ml-2" id="finder-title">${t.overview.title}</span>
-                                </div>
-                                <div class="flex gap-2 text-theme-secondary">
-                                    <i class="ph ph-magnifying-glass hover:text-theme-primary cursor-pointer"></i>
-                                </div>
-                            </div>
+        const Finder = ({ lang }) => {
+            const data = RESUME_DATA[lang];
+            const [activeTab, setActiveTab] = useState('overview');
+            const contentRef = useRef(null);
 
-                            <!-- Dynamic Content -->
-                            <div id="finder-content" class="p-8 text-theme-primary">
-                                <!-- Default Content (Overview) - Populated by JS -->
-                            </div>
-                        </div>
-                    </div>`;
+            useEffect(() => {
+                if (contentRef.current) {
+                contentRef.current.scrollTop = 0;
                 }
-            },
-            gemini: {
-                id: 'gemini',
-                width: 400,
-                height: 550,
-                x: 600,
-                y: 100,
-                render: () => {
-                    const t = getTexts().gemini;
-                    return `
-                    <div class="flex flex-col h-full bg-theme-window">
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 p-4 border-b border-theme flex items-center gap-3">
-                            <div class="bg-white dark:bg-gray-800 p-1.5 rounded-lg shadow-sm">
-                                <i class="ph-fill ph-sparkle text-xl text-purple-600 dark:text-purple-400"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-theme-primary">${t.title}</div>
-                                <div class="text-xs text-theme-secondary">${t.subtitle}</div>
-                            </div>
-                        </div>
-                        
-                        <div id="gemini-chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-theme-window">
-                            <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0">
-                                    <i class="ph-fill ph-sparkle"></i>
-                                </div>
-                                <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm max-w-[85%]">
-                                    ${t.intro}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-3 bg-theme-sidebar border-t border-theme">
-                            <div class="relative flex items-center">
-                                <input type="text" id="gemini-input" class="w-full bg-theme-window text-theme-primary border border-theme rounded-full px-4 py-2 pr-10 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-gray-400" placeholder="${t.placeholder}" onkeydown="if(event.key === 'Enter') sendGeminiMessage()">
-                                <button onclick="sendGeminiMessage()" class="absolute right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-colors shadow-sm">
-                                    <i class="ph-bold ph-arrow-up"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
-                }
-            },
-            safari: {
-                id: 'safari',
-                width: 800,
-                height: 600,
-                x: 150,
-                y: 60,
-                render: () => {
-                    const d = getData();
-                    return `
-                    <div class="flex flex-col h-full bg-white dark:bg-[#1e1e1e]">
-                        <!-- Safari Toolbar -->
-                        <div class="h-12 bg-[#f6f6f6] dark:bg-[#333] border-b border-[#d1d1d1] dark:border-[#444] flex items-center px-4 gap-4 justify-between">
-                            <div class="flex gap-4">
-                                <div class="flex gap-1 text-gray-500">
-                                    <i class="ph ph-caret-left text-lg"></i>
-                                    <i class="ph ph-caret-right text-lg text-gray-300"></i>
-                                </div>
-                                <i class="ph ph-sidebar text-lg text-gray-500"></i>
-                            </div>
-                            
-                            <div class="flex-1 max-w-xl mx-auto">
-                                <div class="bg-white dark:bg-[#222] border border-[#d1d1d1] dark:border-[#444] rounded-lg h-8 flex items-center justify-center text-xs text-gray-700 dark:text-gray-300 shadow-sm relative group">
-                                    <i class="ph-fill ph-lock-key text-gray-400 absolute left-2"></i>
-                                    <span class="group-hover:hidden">career.mei-hanbin.com</span>
-                                    <span class="hidden group-hover:block text-gray-400">https://career.mei-hanbin.com/experience</span>
-                                    <i class="ph ph-arrow-clockwise text-gray-500 absolute right-2 text-sm"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="flex gap-4 text-gray-500">
-                                <i class="ph ph-share-network text-lg"></i>
-                                <i class="ph ph-plus text-lg"></i>
-                                <i class="ph ph-squares-four text-lg"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Webpage Content -->
-                        <div class="flex-1 overflow-y-auto bg-white dark:bg-[#1e1e1e]">
-                            <div class="max-w-4xl mx-auto p-10">
-                                <div class="text-center mb-12">
-                                    <div class="inline-block bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-3">WORK EXPERIENCE</div>
-                                    <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">${currentLang === 'zh' ? '职业生涯与项目' : 'Career & Projects'}</h1>
-                                    <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">${currentLang === 'zh' ? '在市场营销、内容运营和跨文化沟通领域的实战经验总结。' : 'Experience in marketing, content operations, and cross-cultural communication.'}</p>
-                                </div>
+            }, [activeTab]);
 
-                                <div class="space-y-12 relative before:absolute before:left-0 before:top-2 before:bottom-0 before:w-0.5 before:bg-gray-200 dark:before:bg-gray-700 md:before:left-1/2">
-                                    ${d.experience.map((exp, index) => `
-                                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
-                                            <!-- Dot -->
-                                            <div class="absolute left-[-5px] md:left-1/2 md:-ml-1.5 w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-white dark:border-gray-800 group-hover:bg-blue-500 transition-colors z-10"></div>
-                                            
-                                            <div class="w-full md:w-[45%] mb-4 md:mb-0 ${index % 2 === 0 ? 'md:order-1 md:text-right' : 'md:order-3 md:text-left'} pl-6 md:pl-0">
-                                                <div class="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1">${exp.date}</div>
-                                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${exp.company}</h3>
-                                                <div class="text-sm text-gray-500 dark:text-gray-400 font-medium">${exp.role}</div>
-                                                <div class="text-xs text-gray-400 mt-1"><i class="ph-fill ph-map-pin"></i> ${exp.location}</div>
-                                            </div>
-                                            
-                                            <div class="w-full md:w-[45%] ${index % 2 === 0 ? 'md:order-3' : 'md:order-1'} pl-6 md:pl-0">
-                                                <div class="bg-gray-50 dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                                                    <ul class="space-y-2">
-                                                        ${exp.details.map(d => `
-                                                            <li class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 leading-relaxed text-left">
-                                                                <i class="ph-fill ph-check-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
-                                                                <span>${marked.parseInline(d)}</span>
-                                                            </li>
-                                                        `).join('')}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
+            const renderContent = () => {
+                switch (activeTab) {
+                case 'overview':
+                    return (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        {/* Header Profile */}
+                        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-200 to-indigo-200 p-1 shadow-inner shrink-0">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male`} alt="avatar" className="w-full h-full object-cover" />
                             </div>
-                            
-                            <!-- Footer Imitation -->
-                            <div class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 mt-12 text-center text-gray-400 text-xs">
-                                &copy; 2025 Mei Hanbin. Designed with MeiOS.
                             </div>
-                        </div>
-                    </div>`;
-                }
-            },
-            preview: {
-                id: 'preview',
-                width: 700,
-                height: 850,
-                x: 300,
-                y: 50,
-                render: () => {
-                    const d = getData();
-                    return `
-                    <div class="bg-[#525659] h-full flex flex-col">
-                        <!-- PDF Toolbar -->
-                        <div class="h-10 bg-[#323639] flex items-center justify-between px-4 shadow-md z-10 text-gray-300 text-xs">
-                             <div class="font-medium text-white truncate w-1/3">${getTexts().desktop.pdf}</div>
-                             <div class="flex gap-4">
-                                <span class="hover:text-white cursor-pointer bg-black/30 px-2 py-0.5 rounded">1 / 1</span>
-                                <span class="hover:text-white cursor-pointer border-l border-gray-600 pl-4">-</span>
-                                <span class="hover:text-white cursor-pointer">100%</span>
-                                <span class="hover:text-white cursor-pointer">+</span>
-                             </div>
-                             <div class="flex gap-3 w-1/3 justify-end">
-                                <i class="ph ph-download-simple hover:text-white cursor-pointer text-lg" title="下载" onclick="alert('模拟下载简历')"></i>
-                                <i class="ph ph-printer hover:text-white cursor-pointer text-lg" title="打印"></i>
-                             </div>
+                            <div className="text-center md:text-left flex-1">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{data.profile.name}</h2>
+                            <p className="text-blue-600 dark:text-blue-400 font-medium mb-2">{data.profile.role}</p>
+                            <div className="flex flex-wrap gap-3 justify-center md:justify-start text-xs text-gray-500 dark:text-gray-400">
+                                <span className="flex items-center gap-1 bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+                                    <i className="ph-fill ph-phone" /> {data.profile.phone}
+                                </span>
+                                <span className="flex items-center gap-1 bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+                                    <i className="ph-fill ph-envelope" /> {data.profile.email}
+                                </span>
+                            </div>
+                            </div>
                         </div>
                         
-                        <!-- PDF Container -->
-                        <div class="flex-1 overflow-y-auto overflow-x-hidden p-8 flex justify-center bg-[#525659] window-content" id="pdf-container">
-                            <div class="a4-paper relative">
-                                <!-- Resume Header -->
-                                <header class="border-b-2 border-gray-800 pb-6 mb-6">
-                                    <div class="flex justify-between items-end">
-                                        <div>
-                                            <h1 class="text-3xl font-bold text-gray-900 tracking-wide">${d.profile.name}</h1>
-                                            <p class="text-gray-600 mt-2 font-medium">${d.profile.role}</p>
-                                        </div>
-                                        <div class="text-right text-sm text-gray-600 leading-relaxed">
-                                            <div>${d.profile.phone}</div>
-                                            <div>${d.profile.email}</div>
-                                            <div>${currentLang === 'zh' ? '浙江杭州 / 山东青岛' : 'Hangzhou / Qingdao, China'}</div>
-                                        </div>
-                                    </div>
-                                </header>
-                                
-                                <!-- Content Columns -->
-                                <div class="grid grid-cols-1 gap-6">
-                                    <!-- Education -->
-                                    <section>
-                                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.edu.title}</h2>
-                                        <div class="space-y-3">
-                                            ${d.education.map(edu => `
-                                                <div class="flex justify-between">
-                                                    <div>
-                                                        <span class="font-bold text-gray-800">${edu.school}</span>
-                                                        <span class="mx-2 text-gray-400">|</span>
-                                                        <span class="text-gray-700">${edu.degree}</span>
-                                                    </div>
-                                                    <span class="text-gray-600 font-mono text-sm">${edu.year}</span>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </section>
+                        {/* Summary */}
+                        <div className="prose dark:prose-invert max-w-none">
+                            <h3 className="text-lg font-bold border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 flex items-center gap-2 text-gray-800 dark:text-white">
+                            <i className="ph-duotone ph-user-circle text-blue-500" />
+                            {lang === 'zh' ? '个人总结' : 'Summary'}
+                            </h3>
+                            <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                            {data.profile.summary}
+                            </p>
+                        </div>
 
-                                    <!-- Experience -->
-                                    <section>
-                                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider mt-2">${getTexts().finder.exp.title}</h2>
-                                        <div class="space-y-5">
-                                            ${d.experience.map(exp => `
-                                                <div>
-                                                    <div class="flex justify-between items-baseline mb-1">
-                                                        <h3 class="font-bold text-gray-800">${exp.company}</h3>
-                                                        <span class="text-gray-600 font-mono text-sm">${exp.date}</span>
-                                                    </div>
-                                                    <div class="text-gray-700 italic mb-2 text-sm">${exp.role} | ${exp.location}</div>
-                                                    <ul class="list-disc ml-4 space-y-1 text-gray-700 text-sm">
-                                                        ${exp.details.map(d => `<li>${marked.parseInline(d)}</li>`).join('')}
-                                                    </ul>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </section>
-                                    
-                                    <!-- Skills & Profile -->
-                                    <section class="grid grid-cols-2 gap-6 mt-2">
-                                        <div>
-                                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.overview.strength}</h2>
-                                            <ul class="list-disc ml-4 text-sm text-gray-700 space-y-1">
-                                                ${d.profile.advantages.map(adv => `<li>${adv}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">${getTexts().finder.skill.title}</h2>
-                                            <ul class="text-sm text-gray-700 space-y-2">
-                                                ${d.skills.map(skill => `
-                                                    <li class="flex justify-between border-b border-dotted border-gray-200 pb-1">
-                                                        <span class="font-medium">${skill.name}</span>
-                                                        <span class="text-gray-600 text-right text-xs">${skill.level}</span>
-                                                    </li>
-                                                `).join('')}
-                                            </ul>
-                                        </div>
-                                    </section>
+                        {/* Skills/Advantages */}
+                        <div>
+                            <h3 className="text-lg font-bold border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 flex items-center gap-2 text-gray-800 dark:text-white">
+                            <i className="ph-duotone ph-star text-yellow-500" />
+                            {lang === 'zh' ? '核心优势' : 'Advantages'}
+                            </h3>
+                            <div className="grid grid-cols-1 gap-3">
+                            {data.profile.advantages.map((adv, i) => (
+                                <div key={i} className="flex gap-3 items-start p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                    <i className="ph-fill ph-check-circle text-green-500 mt-0.5 shrink-0" />
+                                    <span className="text-sm text-gray-700 dark:text-gray-200 leading-normal" dangerouslySetInnerHTML={{ __html: marked.parseInline(adv) }} />
                                 </div>
+                            ))}
                             </div>
                         </div>
-                    </div>`;
-                }
-            },
-            terminal: {
-                id: 'terminal',
-                width: 550,
-                height: 380,
-                x: 200,
-                y: 120,
-                render: () => `
-                    <div class="bg-[#1e1e1e] h-full text-[#33ff00] font-mono p-4 text-sm overflow-y-auto window-content" onclick="document.getElementById('term-input').focus()">
-                        <div class="mb-2 text-gray-400">Last login: ${new Date().toDateString()} on ttys001</div>
-                        <div id="typewriter-area"></div>
-                        <div class="flex mt-2 hidden" id="terminal-input-line">
-                            <span class="mr-2">MeiOS:~ user$</span>
-                            <input type="text" id="term-input" class="bg-transparent border-none text-[#33ff00] focus:outline-none flex-1 font-mono" autocomplete="off">
-                        </div>
-                    </div>`
-            },
-            mail: {
-                id: 'mail',
-                width: 700,
-                height: 500,
-                x: 250,
-                y: 150,
-                render: () => {
-                    const d = getData();
-                    return `
-                     <div class="flex h-full bg-theme-window">
-                        <!-- Mail Sidebar -->
-                        <div class="w-48 bg-theme-sidebar border-r border-theme pt-3 flex flex-col">
-                             <div class="px-3 mb-2 text-xs font-bold text-theme-secondary uppercase">Mailboxes</div>
-                             <div class="bg-blue-500 text-white px-3 py-1 mx-2 rounded flex justify-between text-sm">
-                                <span>Inbox</span>
-                                <span>1</span>
-                             </div>
-                             <div class="px-3 py-1 mx-2 rounded flex justify-between text-sm text-theme-secondary hover:bg-black/10 dark:hover:bg-white/10 mt-1">
-                                <span>Sent</span>
-                             </div>
-                             <div class="px-3 py-1 mx-2 rounded flex justify-between text-sm text-theme-secondary hover:bg-black/10 dark:hover:bg-white/10 mt-1">
-                                <span>Drafts</span>
-                             </div>
-                        </div>
+                    </div>
+                    );
+                case 'edu':
+                    return (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <h3 className="text-lg font-bold border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center gap-2 text-gray-800 dark:text-white">
+                            <i className="ph-duotone ph-graduation-cap text-purple-500" />
+                            {lang === 'zh' ? '教育经历' : 'Education'}
+                        </h3>
+                        {data.education.map((edu, i) => (
+                            <div key={i} className="relative pl-6 border-l-2 border-gray-200 dark:border-gray-700 pb-6 last:pb-0">
+                                <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-gray-900 border-2 border-purple-500" />
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-1">
+                                <h4 className="text-base font-bold text-gray-900 dark:text-white">{edu.school}</h4>
+                                <span className="text-xs font-mono text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">{edu.year}</span>
+                                </div>
+                                <div className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2">{edu.degree}</div>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+                                {edu.details}
+                                </p>
+                            </div>
+                        ))}
                         
-                        <!-- Mail List & Content -->
-                        <div class="flex-1 flex flex-col">
-                             <div class="h-10 border-b border-theme flex items-center px-4 justify-between bg-theme-window/50">
-                                <div class="flex gap-3 text-theme-secondary">
-                                    <i class="ph ph-envelope-simple text-lg"></i>
-                                    <i class="ph ph-trash text-lg"></i>
-                                    <i class="ph ph-archive text-lg"></i>
+                        <h3 className="text-lg font-bold border-b border-gray-200 dark:border-gray-700 pb-2 mt-8 flex items-center gap-2 text-gray-800 dark:text-white">
+                            <i className="ph-duotone ph-wrench text-orange-500" />
+                            {lang === 'zh' ? '技能清单' : 'Skills'}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {data.skills.map((skill, i) => (
+                                <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{skill.name}</span>
+                                <span className="text-xs text-gray-500 bg-white dark:bg-gray-900 px-2 py-1 rounded shadow-sm">{skill.level}</span>
                                 </div>
-                                <div class="text-theme-secondary text-xs">Updated Just Now</div>
-                                <i class="ph ph-pencil-simple-line text-blue-500 text-lg cursor-pointer" onclick="window.location.href='mailto:meihanbin@qq.com'"></i>
-                             </div>
-                             
-                             <div class="flex-1 p-6 text-theme-primary">
-                                <div class="flex justify-between items-start mb-6">
-                                    <div>
-                                        <h2 class="text-xl font-bold">${currentLang === 'zh' ? '期待您的来信' : 'Looking forward to hearing from you'}</h2>
-                                        <div class="mt-1 flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male">
-                                            </div>
-                                            <div class="text-sm">
-                                                <span class="font-bold">Mei Hanbin</span>
-                                                <span class="text-theme-secondary">&lt;${d.profile.email}&gt;</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="text-xs text-theme-secondary">Today</div>
-                                </div>
-                                
-                                <div class="prose text-sm text-theme-primary leading-relaxed">
-                                    <p>${currentLang === 'zh' ? '尊敬的 HR / 招聘经理：' : 'Dear Hiring Manager,'}</p>
-                                    <p class="mt-4">${currentLang === 'zh' ? '您好！感谢您浏览我的个人主页。' : 'Thank you for visiting my personal site.'}</p>
-                                    <p class="mt-2">${currentLang === 'zh' ? '如果您对我的简历感兴趣，或有任何工作机会想与我沟通，请直接通过下方联系方式与我联系。' : 'If you are interested in my profile, please feel free to contact me.'}</p>
-                                    
-                                    <div class="my-6 p-4 bg-theme-sidebar rounded-lg border border-theme inline-block pr-12">
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <i class="ph-fill ph-phone text-blue-500"></i>
-                                            <span class="font-medium select-all">${d.profile.phone}</span>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <i class="ph-fill ph-envelope-simple text-blue-500"></i>
-                                            <a href="mailto:${d.profile.email}" class="hover:underline text-blue-600 select-all">${d.profile.email}</a>
-                                        </div>
-                                    </div>
-                                    
-                                    <p>${currentLang === 'zh' ? '祝工作顺利！' : 'Best Regards,'}</p>
-                                </div>
-                             </div>
+                            ))}
                         </div>
-                     </div>`;
+                    </div>
+                    );
+                case 'exp':
+                    return (
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <h3 className="text-lg font-bold border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center gap-2 text-gray-800 dark:text-white">
+                            <i className="ph-duotone ph-briefcase text-blue-500" />
+                            {lang === 'zh' ? '工作经历' : 'Work Experience'}
+                        </h3>
+                        {data.experience.map((exp, i) => (
+                            <div key={i} className="group">
+                                <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
+                                <div>
+                                    <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                        {exp.company}
+                                        <span className="text-[10px] font-normal text-gray-500 border border-gray-200 dark:border-gray-600 px-1.5 rounded-full">{exp.location}</span>
+                                    </h3>
+                                    <div className="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-0.5">{exp.role}</div>
+                                </div>
+                                <span className="text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded mt-2 sm:mt-0">{exp.date}</span>
+                                </div>
+                                <div className="mt-3 bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-200 dark:hover:border-blue-800/50 transition-colors">
+                                <ul className="space-y-2.5">
+                                    {exp.details.map((d, j) => (
+                                        <li key={j} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2 leading-relaxed">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+                                            <span dangerouslySetInnerHTML={{ __html: marked.parseInline(d) }} />
+                                        </li>
+                                    ))}
+                                </ul>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    );
+                default: return null;
                 }
-            }
+            };
+
+            return (
+                <div className="flex flex-col md:flex-row h-full text-gray-800 dark:text-gray-100 bg-white dark:bg-[#1e1e1e]">
+                {/* Sidebar Navigation */}
+                <div className="w-full md:w-48 bg-gray-50/80 dark:bg-[#2c2c2c]/50 backdrop-blur border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 p-2 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible shrink-0 z-10">
+                    {[
+                    { id: 'overview', icon: 'ph-user', label: lang === 'zh' ? '个人概览' : 'Overview' },
+                    { id: 'exp', icon: 'ph-briefcase', label: lang === 'zh' ? '工作经历' : 'Experience' },
+                    { id: 'edu', icon: 'ph-graduation-cap', label: lang === 'zh' ? '教育/技能' : 'Edu & Skills' }
+                    ].map(item => (
+                    <button 
+                        key={item.id}
+                        onClick={() => setActiveTab(item.id)}
+                        className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${activeTab === item.id ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'}`}
+                    >
+                        <i className={`ph-bold ${item.icon} text-sm`} />
+                        {item.label}
+                    </button>
+                    ))}
+                </div>
+                
+                {/* Main Content Area */}
+                <div className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar relative" ref={contentRef}>
+                    <div className="max-w-3xl mx-auto">
+                        {renderContent()}
+                    </div>
+                    
+                    {/* Footer copyright */}
+                    <div className="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-center text-xs text-gray-400 pb-4">
+                        &copy; {new Date().getFullYear()} Mei Hanbin. All rights reserved.
+                    </div>
+                </div>
+                </div>
+            );
         };
 
-        // --- Core Logic ---
+        const Mail = ({ lang }) => {
+            const data = RESUME_DATA[lang];
+            const [copied, setCopied] = useState(null);
 
-        function openWindow(appId) {
-            const container = document.getElementById('windows-container');
-            
-            if (document.getElementById(`window-${appId}`)) {
-                bringToFront(appId);
-                restoreWindow(appId);
-                return;
-            }
+            const handleCopy = (text, type) => {
+                navigator.clipboard.writeText(text);
+                setCopied(type);
+                setTimeout(() => setCopied(null), 2000);
+            };
 
-            const app = windows[appId];
-            if(!app) return;
-
-            const dot = document.getElementById(`dot-${appId}`);
-            if(dot) dot.style.opacity = '1';
-            
-            const icon = dot ? dot.parentElement : null;
-            if(icon) {
-                icon.style.transform = "translateY(-15px)";
-                setTimeout(() => icon.style.transform = "", 200);
-            }
-
-            const win = document.createElement('div');
-            win.id = `window-${appId}`;
-            win.className = `window rounded-lg overflow-hidden`;
-            
-            const offset = document.querySelectorAll('.window').length * 20;
-            win.style.width = app.width + 'px';
-            win.style.height = app.height + 'px';
-            win.style.top = (app.y + offset) + 'px';
-            win.style.left = (app.x + offset) + 'px';
-            win.style.zIndex = ++maxZIndex;
-            
-            win.style.opacity = '0';
-            win.style.transform = 'scale(0.95)';
-
-            // Render content using dynamic function
-            const contentHTML = app.render();
-            const winTitle = getTexts().windows[appId] || "Window";
-            
-            // Header Color logic: Terminal and Preview are always dark-ish, others follow theme
-            const isAlwaysDark = appId === 'terminal';
-            let headerClass = isAlwaysDark ? 'bg-[#323639] text-gray-400 border-black/20' : 'bg-gray-200/90 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-black/5 dark:border-white/10';
-
-            win.innerHTML = `
-                <!-- Window Header (Draggable Area) -->
-                <div class="h-8 ${headerClass} border-b flex items-center px-3 cursor-default select-none relative" id="header-${appId}">
-                    <div class="flex gap-2 group z-10 absolute left-3">
-                        <div onclick="closeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] hover:bg-[#ff5f56]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Close">x</div>
-                        <div onclick="minimizeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] hover:bg-[#ffbd2e]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Minimize">-</div>
-                        <div onclick="maximizeWindow('${appId}', event)" class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] hover:bg-[#27c93f]/80 flex items-center justify-center cursor-pointer text-[8px] text-black/0 group-hover:text-black/50 transition-colors" title="Zoom">+</div>
+            return (
+                <div className="flex h-full bg-white dark:bg-[#1e1e1e]">
+                <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#252525] flex flex-col hidden sm:flex">
+                    <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                        <input type="text" placeholder={lang === 'zh' ? '搜索' : 'Search'} className="w-full bg-gray-200 dark:bg-gray-800 rounded px-3 py-1 text-sm focus:outline-none" />
                     </div>
-                    <div class="w-full text-center text-xs font-semibold" id="title-${appId}">${winTitle}</div>
+                    <div className="flex-1 overflow-y-auto">
+                        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 border-l-4 border-blue-500 cursor-pointer">
+                        <div className="flex justify-between items-baseline mb-1">
+                            <span className="font-bold text-sm text-gray-900 dark:text-white">Mei Hanbin</span>
+                            <span className="text-xs text-gray-500">Just now</span>
+                        </div>
+                        <div className="text-xs font-medium text-gray-800 dark:text-gray-200 mb-1">{lang === 'zh' ? '申请职位 - 附件简历' : 'Job Application - Resume Attached'}</div>
+                        <div className="text-xs text-gray-500 line-clamp-2">
+                            {lang === 'zh' ? '尊敬的招聘经理，您好！我是梅汉斌...' : 'Dear Hiring Manager, I am Mei Hanbin...'}
+                        </div>
+                        </div>
+                        <div className="p-3 border-b border-gray-100 dark:border-gray-800 opacity-60">
+                        <div className="flex justify-between items-baseline mb-1">
+                            <span className="font-bold text-sm text-gray-900 dark:text-white">LinkedIn Job Alert</span>
+                            <span className="text-xs text-gray-500">Yesterday</span>
+                        </div>
+                        <div className="text-xs text-gray-500">30 new jobs match your profile</div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Window Body -->
-                <div class="flex-1 overflow-hidden relative" id="body-${appId}">
-                    ${contentHTML}
-                </div>
-            `;
 
-            container.appendChild(win);
-            
-            if(appId === 'finder') updateFinderView('overview');
+                <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#1e1e1e]">
+                    <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                        <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                            {lang === 'zh' ? '申请职位 - 附个人简历与作品集' : 'Application for Position - Resume & Portfolio Attached'}
+                        </h2>
+                        <div className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Inbox</div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male`} alt="avatar" />
+                        </div>
+                        <div>
+                            <div className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                Mei Hanbin 
+                                <span className="text-xs font-normal text-gray-500">&lt;{data.profile.email}&gt;</span>
+                            </div>
+                            <div className="text-xs text-gray-500">To: Hiring Manager</div>
+                        </div>
+                        </div>
+                    </div>
 
-            requestAnimationFrame(() => {
-                win.style.opacity = '1';
-                win.style.transform = 'scale(1)';
-            });
+                    <div className="flex-1 p-6 overflow-y-auto text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+                        <p className="mb-4">
+                        {lang === 'zh' ? '尊敬的招聘负责人：' : 'Dear Hiring Manager,'}
+                        </p>
+                        <p className="mb-4">
+                        {lang === 'zh' 
+                            ? '您好！感谢您花时间阅读我的简历。我具备丰富的市场调研与跨平台内容运营经验，熟练掌握 AI 工具优化工作流。' 
+                            : 'Thank you for taking the time to review my resume. I have extensive experience in market research and cross-platform content operations, proficient in using AI tools to optimize workflows.'}
+                        </p>
+                        <p className="mb-6">
+                        {lang === 'zh' 
+                            ? '如果您对我的经历感兴趣，欢迎通过以下方式联系我：' 
+                            : 'If you are interested in my experience, please feel free to contact me via:'}
+                        </p>
 
-            makeDraggable(win, document.getElementById(`header-${appId}`));
-            win.addEventListener('mousedown', () => bringToFront(appId));
-
-            if (appId === 'terminal') runTerminalEffect();
-        }
-
-        // --- Window Actions ---
-
-        function closeWindow(appId, e) {
-            if(e) e.stopPropagation();
-            const win = document.getElementById(`window-${appId}`);
-            if (win) {
-                win.style.transition = "all 0.2s ease-in";
-                win.style.opacity = '0';
-                win.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    win.remove();
-                    const dot = document.getElementById(`dot-${appId}`);
-                    if(dot) dot.style.opacity = '0';
-                }, 200);
-            }
-        }
-
-        function minimizeWindow(appId, e) {
-            if(e) e.stopPropagation();
-            const win = document.getElementById(`window-${appId}`);
-            if (win) {
-                win.classList.add('window-animating');
-                win.style.transform = 'translateY(100vh) scale(0.1)';
-                win.style.opacity = '0';
-                setTimeout(() => {
-                    win.style.display = 'none'; 
-                    win.classList.remove('window-animating');
-                }, 300);
-            }
-        }
-        
-        function restoreWindow(appId) {
-            const win = document.getElementById(`window-${appId}`);
-            if (win && win.style.display === 'none') {
-                win.style.display = 'flex';
-                void win.offsetWidth;
-                win.classList.add('window-animating');
-                win.style.transform = 'translateY(0) scale(1)';
-                win.style.opacity = '1';
-                setTimeout(() => {
-                    win.classList.remove('window-animating');
-                    bringToFront(appId);
-                }, 300);
-            }
-        }
-
-        function maximizeWindow(appId, e) {
-            if(e) e.stopPropagation();
-            const win = document.getElementById(`window-${appId}`);
-            if (!win) return;
-            
-            win.classList.add('window-animating');
-            
-            if (win.dataset.maximized === "true") {
-                // Restore
-                win.style.top = (win.dataset.prevTop || windows[appId].y) + 'px';
-                win.style.left = (win.dataset.prevLeft || windows[appId].x) + 'px';
-                win.style.width = (win.dataset.prevWidth || windows[appId].width) + 'px';
-                win.style.height = (win.dataset.prevHeight || windows[appId].height) + 'px';
-                win.style.borderRadius = '10px';
-                win.dataset.maximized = "false";
-            } else {
-                // Store previous state
-                win.dataset.prevTop = win.style.top;
-                win.dataset.prevLeft = win.style.left;
-                win.dataset.prevWidth = win.style.width;
-                win.dataset.prevHeight = win.style.height;
-
-                // Maximize Logic: Fit between Menu Bar (32px) and Dock (approx 96px + gap)
-                win.style.top = '32px'; 
-                win.style.left = '0';
-                win.style.width = '100%';
-                
-                // Dock is h-24 (96px) + pb-3 (12px) ~= 108px. Let's give it 110px bottom clearance.
-                const menuHeight = 32;
-                const dockHeight = 110;
-                win.style.height = `calc(100vh - ${menuHeight}px - ${dockHeight}px)`; 
-                
-                win.style.borderRadius = '0 0 10px 10px';
-                win.dataset.maximized = "true";
-            }
-            
-            setTimeout(() => {
-                win.classList.remove('window-animating');
-            }, 300);
-        }
-
-        function bringToFront(appId) {
-            const win = document.getElementById(`window-${appId}`);
-            if (win) {
-                win.style.zIndex = ++maxZIndex;
-            }
-        }
-        
-        // --- System Toggles ---
-        
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('theme-icon');
-            icon.className = isDarkMode ? "ph-fill ph-sun text-lg cursor-pointer hover:scale-110 transition-transform text-yellow-400" : "ph ph-moon text-lg cursor-pointer hover:scale-110 transition-transform";
-        }
-        
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? '中' : 'En';
-            
-            // Re-render open windows to reflect language change
-            Object.keys(windows).forEach(appId => {
-                const win = document.getElementById(`window-${appId}`);
-                if(win) {
-                    // Update Title
-                    const titleEl = document.getElementById(`title-${appId}`);
-                    if(titleEl) titleEl.innerText = getTexts().windows[appId];
-                    
-                    // Update Content
-                    const bodyEl = document.getElementById(`body-${appId}`);
-                    if(bodyEl) {
-                        bodyEl.innerHTML = windows[appId].render();
-                        // Special init for finder
-                        if(appId === 'finder') updateFinderView(document.querySelector('.sidebar-item.active')?.id?.replace('nav-', '') || 'overview');
-                    }
-                }
-            });
-            
-            // Update Desktop Icons & Menu labels (Simple DOM update)
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const keys = key.split('.');
-                let val = getTexts();
-                keys.forEach(k => val = val[k]);
-                el.innerText = val;
-            });
-        }
-
-        // --- Finder Logic ---
-        function updateFinderView(view) {
-            const content = document.getElementById('finder-content');
-            const title = document.getElementById('finder-title');
-            if(!content) return;
-            
-            document.querySelectorAll('#finder-container .sidebar-item').forEach(el => el.classList.remove('active'));
-            const navItem = document.getElementById(`nav-${view}`);
-            if(navItem) navItem.classList.add('active');
-
-            const d = getData();
-            const t = getTexts().finder;
-            let html = "";
-            
-            switch(view) {
-                case 'overview':
-                    title.innerText = t.overview.title;
-                    html = `
-                        <div class="flex items-start gap-6 mb-8">
-                            <div class="w-24 h-24 rounded-full bg-gray-200 overflow-hidden shadow-inner flex-shrink-0">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male" class="w-full h-full object-cover">
+                        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                        <button 
+                            onClick={() => handleCopy(data.profile.email, 'email')}
+                            className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 transition-all group text-left"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300">
+                                <i className="ph-fill ph-envelope-simple text-xl" />
                             </div>
                             <div>
-                                <h1 class="text-3xl font-bold text-theme-primary mb-1">${d.profile.name}</h1>
-                                <p class="text-theme-secondary mb-3 text-base">${d.profile.role}</p>
-                                <div class="flex gap-4 text-sm text-theme-secondary">
-                                     <span class="flex items-center gap-1"><i class="ph-fill ph-phone"></i> ${d.profile.phone}</span>
-                                     <span class="flex items-center gap-1"><i class="ph-fill ph-envelope"></i> ${d.profile.email}</span>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">Email</div>
+                                <div className="font-medium font-mono text-gray-900 dark:text-white">{data.profile.email}</div>
+                            </div>
+                            {copied === 'email' ? <i className="ph-bold ph-check text-green-500 ml-2" /> : <i className="ph-bold ph-copy text-gray-400 opacity-0 group-hover:opacity-100 ml-2" />}
+                        </button>
+
+                        <button 
+                            onClick={() => handleCopy(data.profile.phone, 'phone')}
+                            className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 transition-all group text-left"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-300">
+                                <i className="ph-fill ph-phone text-xl" />
+                            </div>
+                            <div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">Phone</div>
+                                <div className="font-medium font-mono text-gray-900 dark:text-white">{data.profile.phone}</div>
+                            </div>
+                            {copied === 'phone' ? <i className="ph-bold ph-check text-green-500 ml-2" /> : <i className="ph-bold ph-copy text-gray-400 opacity-0 group-hover:opacity-100 ml-2" />}
+                        </button>
+                        </div>
+
+                        <p className="mt-8 border-t border-gray-100 dark:border-gray-800 pt-4 text-gray-500 italic">
+                        {lang === 'zh' 
+                            ? '期待能有机会与您进一步交流，祝工作愉快！' 
+                            : 'I look forward to the opportunity to discuss further with you. Have a great day!'}
+                        </p>
+                        <p className="mt-2 font-bold text-gray-900 dark:text-white">
+                        {data.profile.name}
+                        </p>
+                    </div>
+                </div>
+                </div>
+            );
+        };
+
+        const Safari = ({ lang }) => {
+            const [currentPath, setCurrentPath] = useState('/');
+            const [history, setHistory] = useState(['/']);
+            const [selectedIndex, setSelectedIndex] = useState(null);
+
+            const navigate = (path, index) => {
+                setCurrentPath(path);
+                setHistory([...history, path]);
+                if (index !== undefined) setSelectedIndex(index);
+            };
+
+            const goBack = () => {
+                if (history.length > 1) {
+                const newHistory = [...history];
+                newHistory.pop();
+                setHistory(newHistory);
+                setCurrentPath(newHistory[newHistory.length - 1]);
+                setSelectedIndex(null);
+                }
+            };
+
+            const renderPage = () => {
+                if (currentPath === '/') {
+                return (
+                    <div className="max-w-4xl mx-auto text-center mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="w-20 h-20 bg-blue-500 text-white rounded-2xl mx-auto flex items-center justify-center text-4xl shadow-xl mb-6 transform hover:scale-110 transition-transform">
+                        <i className="ph-bold ph-smiley" />
+                    </div>
+                    <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">{lang === 'zh' ? '欢迎访问我的主页' : 'Welcome to My Portfolio'}</h1>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl mx-auto mb-10">
+                        {RESUME_DATA[lang].profile.summary}
+                    </p>
+                    
+                    <h2 className="text-xl font-bold mb-6 text-left px-2 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <i className="ph-duotone ph-briefcase text-blue-500" />
+                        {lang === 'zh' ? '实习经历 (点击查看详情)' : 'Internships (Click for details)'}
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        {RESUME_DATA[lang].experience.map((exp, i) => (
+                            <div 
+                                key={i} 
+                                onClick={() => navigate(`/experience/${i}`, i)}
+                                className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-blue-400 dark:hover:border-blue-500 transition-all bg-gray-50 dark:bg-[#2c2c2c] group cursor-pointer relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i className="ph-bold ph-arrow-right text-blue-500" />
                                 </div>
+                                <h3 className="font-bold text-lg text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{exp.company}</h3>
+                                <p className="text-blue-600 dark:text-blue-400 text-sm mb-2 font-medium">{exp.role}</p>
+                                <p className="text-xs text-gray-400">{exp.date}</p>
+                            </div>
+                        ))}
+                    </div>
+                    </div>
+                );
+                } else if (currentPath.startsWith('/experience/') && selectedIndex !== null) {
+                const exp = RESUME_DATA[lang].experience[selectedIndex];
+                return (
+                    <div className="max-w-3xl mx-auto mt-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <button onClick={goBack} className="mb-6 flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline">
+                        <i className="ph-bold ph-arrow-left" />
+                        {lang === 'zh' ? '返回首页' : 'Back to Home'}
+                    </button>
+                    
+                    <div className="bg-gray-50 dark:bg-[#2c2c2c] rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <div className="border-b border-gray-200 dark:border-gray-700 pb-6 mb-6">
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{exp.company}</h1>
+                            <div className="flex flex-wrap items-center gap-4 text-sm">
+                                <span className="font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">{exp.role}</span>
+                                <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                <i className="ph-fill ph-calendar-blank" /> {exp.date}
+                                </span>
+                                <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                <i className="ph-fill ph-map-pin" /> {exp.location}
+                                </span>
                             </div>
                         </div>
-                        <div class="bg-theme-sidebar p-6 rounded-xl border border-theme">
-                            <h3 class="text-sm font-bold text-theme-secondary uppercase tracking-wider mb-3">${t.overview.intro}</h3>
-                            <p class="text-theme-primary leading-relaxed">${d.profile.summary}</p>
-                        </div>
-                        <div class="mt-6">
-                            <h3 class="text-sm font-bold text-theme-secondary uppercase tracking-wider mb-3">${t.overview.strength}</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                ${d.profile.advantages.slice(0,4).map(adv => `
-                                    <div class="flex gap-2 items-start p-3 bg-theme-window border border-theme rounded-lg shadow-sm">
-                                        <i class="ph-fill ph-check-circle text-green-500 mt-1 flex-shrink-0"></i>
-                                        <span class="text-xs text-theme-secondary">${adv}</span>
+                        
+                        <div className="space-y-6">
+                            <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">{lang === 'zh' ? '工作内容与成就' : 'Responsibilities & Achievements'}</h3>
+                            <div className="space-y-4">
+                                {exp.details.map((detail, idx) => (
+                                <div key={idx} className="flex gap-4 p-4 bg-white dark:bg-[#1e1e1e] rounded-xl border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+                                    <div className="mt-1 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold text-xs">
+                                        {idx + 1}
                                     </div>
-                                `).join('')}
+                                    <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm" dangerouslySetInnerHTML={{ __html: marked.parse(detail) }} />
+                                </div>
+                                ))}
                             </div>
-                        </div>`;
-                    break;
-                case 'education':
-                    title.innerText = t.edu.title;
-                    html = `
-                         <h2 class="text-2xl font-bold mb-6">${t.edu.title}</h2>
-                         <div class="space-y-6">
-                            ${d.education.map(edu => `
-                                <div class="flex gap-4 items-start border-b border-theme pb-6 last:border-0">
-                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-300 font-bold text-xl">
-                                        ${edu.school[0]}
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <h3 class="text-lg font-bold text-theme-primary">${edu.school}</h3>
-                                            <span class="bg-theme-sidebar text-theme-secondary px-2 py-1 rounded text-xs font-mono">${edu.year}</span>
-                                        </div>
-                                        <div class="text-blue-600 dark:text-blue-400 font-medium mb-2">${edu.degree}</div>
-                                        <p class="text-sm text-theme-secondary leading-relaxed">${edu.details}</p>
-                                    </div>
-                                </div>
-                            `).join('')}
-                         </div>`;
-                    break;
-                case 'experience':
-                    title.innerText = t.exp.title;
-                    html = `
-                        <h2 class="text-2xl font-bold mb-6">${t.exp.title}</h2>
-                        <div class="space-y-8">
-                            ${d.experience.map(exp => `
-                                <div class="relative pl-6 border-l-2 border-gray-200 dark:border-gray-700">
-                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-white dark:border-gray-800"></div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <h3 class="text-lg font-bold text-theme-primary">${exp.company}</h3>
-                                            <div class="text-blue-600 dark:text-blue-400">${exp.role}</div>
-                                        </div>
-                                        <span class="text-xs text-gray-400 font-mono">${exp.date}</span>
-                                    </div>
-                                    <ul class="space-y-2 mt-3">
-                                        ${exp.details.map(det => `
-                                            <li class="text-sm text-theme-secondary flex gap-2 items-start">
-                                                <span class="text-gray-400 mt-1">•</span>
-                                                <span class="flex-1">${marked.parseInline(det)}</span>
-                                            </li>
-                                        `).join('')}
-                                    </ul>
-                                </div>
-                            `).join('')}
-                        </div>`;
-                    break;
-                case 'skills':
-                    title.innerText = t.skill.title;
-                    html = `
-                         <h2 class="text-2xl font-bold mb-6">${t.skill.title}</h2>
-                         <div class="grid gap-4">
-                            ${d.skills.map(skill => `
-                                <div class="bg-theme-sidebar p-4 rounded-xl border border-theme">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="font-bold text-theme-primary">${skill.name}</span>
-                                        <i class="ph-fill ph-check-circle text-blue-500"></i>
-                                    </div>
-                                    <div class="text-sm text-theme-secondary">${skill.level}</div>
-                                </div>
-                            `).join('')}
-                         </div>`;
-                    break;
-            }
-            content.innerHTML = html;
-        }
+                        </div>
+                    </div>
+                    </div>
+                );
+                }
+                return null;
+            };
 
-        // --- Draggable ---
-        function makeDraggable(element, handle) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            handle.onmousedown = dragMouseDown;
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.zIndex = ++maxZIndex;
-                if (element.dataset.maximized === "true") return;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-        }
+            return (
+                <div className="h-full flex flex-col bg-white dark:bg-[#1e1e1e]">
+                <div className="h-12 bg-gray-100 dark:bg-[#2c2c2c] border-b border-gray-300 dark:border-black flex items-center justify-between px-4 shrink-0 gap-4">
+                    <div className="flex gap-2 text-gray-500">
+                        <button onClick={goBack} disabled={history.length <= 1} className="hover:text-black dark:hover:text-white disabled:opacity-30 disabled:hover:text-gray-500 transition-colors">
+                            <i className="ph-bold ph-caret-left text-lg" />
+                        </button>
+                        <button className="hover:text-black dark:hover:text-white disabled:opacity-30 transition-colors" disabled>
+                            <i className="ph-bold ph-caret-right text-lg" />
+                        </button>
+                    </div>
+                    <div className="bg-white dark:bg-[#3a3a3a] hover:bg-white dark:hover:bg-[#4a4a4a] transition-colors rounded-lg px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-1 max-w-2xl justify-center shadow-sm cursor-text group">
+                        <i className="ph-fill ph-lock-key text-gray-400 group-hover:text-green-500 transition-colors" />
+                        <span className="select-all truncate">mei-hanbin.com{currentPath === '/' ? '' : currentPath}</span>
+                        <i className="ph-bold ph-arrow-clockwise ml-auto text-gray-400 hover:text-blue-500 cursor-pointer" />
+                    </div>
+                    <div className="w-10"></div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                    {renderPage()}
+                </div>
+                </div>
+            );
+        };
 
-        // --- Gemini AI ---
-        function sendGeminiMessage() {
-            const input = document.getElementById('gemini-input');
-            const chatArea = document.getElementById('gemini-chat-area');
-            const text = input.value.trim();
-            if (!text) return;
+        const Terminal = ({ lang, isDark }) => {
+            const [lines, setLines] = useState([]);
+            const skills = RESUME_DATA[lang].skills;
+            const advantages = RESUME_DATA[lang].profile.advantages;
 
-            const userBubble = document.createElement('div');
-            userBubble.className = 'flex gap-3 justify-end';
-            userBubble.innerHTML = `
-                <div class="chat-bubble-user px-4 py-2 text-sm shadow-sm max-w-[85%]">${text}</div>
-                <div class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mei&gender=male">
-                </div>`;
-            chatArea.appendChild(userBubble);
-            input.value = '';
-            chatArea.scrollTop = chatArea.scrollHeight;
+            useEffect(() => {
+                const bootSequence = [
+                "Last login: " + new Date().toDateString() + " on ttys000",
+                "MeiOS: ~ user$ initializing kernel...",
+                "MeiOS: ~ user$ loading profile...",
+                "MeiOS: ~ user$ system ready."
+                ];
+                setLines(bootSequence);
 
-            const loadingId = 'loading-' + Date.now();
-            const aiLoadingBubble = document.createElement('div');
-            aiLoadingBubble.id = loadingId;
-            aiLoadingBubble.className = 'flex gap-3 mt-4';
-            aiLoadingBubble.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0"><i class="ph-fill ph-sparkle"></i></div>
-                <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm"><div class="flex gap-1 h-5 items-center"><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-200"></div></div></div>`;
-            chatArea.appendChild(aiLoadingBubble);
-            chatArea.scrollTop = chatArea.scrollHeight;
-
-            setTimeout(() => {
-                document.getElementById(loadingId).remove();
-                const response = generateAIResponse(text);
-                const aiBubble = document.createElement('div');
-                aiBubble.className = 'flex gap-3 animate-fade-in';
-                aiBubble.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs flex-shrink-0"><i class="ph-fill ph-sparkle"></i></div>
-                    <div class="chat-bubble-ai px-4 py-2 text-sm shadow-sm max-w-[85%] prose prose-sm dark:prose-invert">${marked.parse(response)}</div>`;
-                chatArea.appendChild(aiBubble);
-                chatArea.scrollTop = chatArea.scrollHeight;
-            }, 800 + Math.random() * 500);
-        }
-
-        function generateAIResponse(query) {
-            const q = query.toLowerCase();
-            const d = getData();
-            let foundInfo = [];
-            
-            // Basic matching logic (simple for demo)
-            if (q.includes("蓝芯") || q.includes("lanxin")) {
-                 const exp = d.experience.find(e => e.company.includes("Lanxin") || e.company.includes("蓝芯"));
-                 if(exp) foundInfo.push(`@ ${exp.company}: \n${exp.details.join('\n')}`);
-            }
-            if (q.includes("english") || q.includes("英语")) {
-                foundInfo.push(d.skills.find(s => s.name.includes("English") || s.name.includes("英语")).level);
-            }
-            
-            if (foundInfo.length === 0) return currentLang === 'zh' ? "抱歉，我没有在简历中找到相关信息。你可以问我关于工作经历、技能或教育背景的问题。" : "Sorry, I couldn't find specific info in the resume. Ask me about experience, skills or education.";
-            
-            return foundInfo.join("\n\n");
-        }
-
-        // --- Terminal ---
-        function runTerminalEffect() {
-            const container = document.getElementById('typewriter-area');
-            const inputLine = document.getElementById('terminal-input-line');
-            if(!container) return;
-            container.innerHTML = '';
-            inputLine.classList.add('hidden');
-            const commands = [
-                { text: "System check: MeiOS Kernel v14.0.1... [OK]", delay: 200 },
-                { text: "Mounting file system: /User/MeiHanbin... [OK]", delay: 500 },
-                { text: "----------------------------------------", delay: 800 },
-                { text: "> Loading module: Market_Analysis_Engine... [Loaded]", delay: 1100 },
-                { text: "> Loading module: Creative_Design_Suite... [Loaded]", delay: 1500 },
-                { text: "All systems operational.", delay: 2000 }
-            ];
-            commands.forEach(line => {
                 setTimeout(() => {
-                    const div = document.createElement('div');
-                    div.className = "mb-1";
-                    div.textContent = line.text;
-                    container.appendChild(div);
-                    container.scrollTop = container.scrollHeight;
-                }, line.delay);
-            });
-            setTimeout(() => {
-                inputLine.classList.remove('hidden');
-                document.getElementById('term-input').focus();
-            }, 2200);
-        }
+                    setLines(prev => [...prev, "MeiOS: ~ user$ cat skills.txt"]);
+                    
+                    let delay = 500;
+                    skills.forEach(skill => {
+                        setTimeout(() => {
+                            setLines(prev => [...prev, `> [${skill.name}]: ${skill.level}`]);
+                        }, delay);
+                        delay += 200;
+                    });
 
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            const timeStr = now.toLocaleTimeString(currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').innerText = `${dateStr} ${timeStr}`;
-        }
+                    setTimeout(() => {
+                        setLines(prev => [...prev, "", "MeiOS: ~ user$ cat advantages.md"]);
+                        let advDelay = 500;
+                        advantages.forEach((adv) => {
+                            setTimeout(() => {
+                                const cleanAdv = adv.replace(/\*\*/g, '');
+                                setLines(prev => [...prev, `* ${cleanAdv.substring(0, 60)}...`]);
+                            }, advDelay);
+                            advDelay += 300;
+                        });
+                        
+                        setTimeout(() => {
+                            setLines(prev => [...prev, "", "MeiOS: ~ user$ _"]);
+                        }, advDelay + 500);
 
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
-            setInterval(updateClock, 1000);
-            updateClock();
-            setTimeout(() => openWindow('finder'), 500);
-        });
+                    }, delay + 500);
 
+                }, 1500);
+
+            }, [lang]);
+
+            const containerRef = useRef(null);
+            useEffect(() => {
+                if(containerRef.current) {
+                    containerRef.current.scrollTop = containerRef.current.scrollHeight;
+                }
+            }, [lines]);
+
+            return (
+                <div 
+                    ref={containerRef} 
+                    className={`h-full p-4 font-mono text-xs md:text-sm overflow-y-auto custom-scrollbar leading-relaxed transition-colors duration-300
+                    ${isDark ? 'bg-[#1e1e1e] text-green-400' : 'bg-white text-gray-800'}`}
+                >
+                {lines.map((l, i) => (
+                    <div key={i} className={`mb-1 break-words ${l.startsWith('MeiOS') ? (isDark ? 'text-blue-400 font-bold' : 'text-blue-600 font-bold') : 'opacity-90'}`}>
+                        {l}
+                    </div>
+                ))}
+                </div>
+            );
+        };
+
+        const GeminiApp = ({ lang }) => {
+            const [messages, setMessages] = useState([
+                { role: 'ai', text: lang === 'zh' ? '你好！我是你的 AI 助手。关于梅汉斌的简历，我可以为你提供详细的解读。请问你想了解他的哪方面经历？' : 'Hello! I am your AI assistant. I can provide detailed insights into Mei Hanbin\'s resume. What would you like to know?' }
+            ]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const scrollRef = useRef(null);
+
+            useEffect(() => {
+                if(scrollRef.current) {
+                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+                }
+            }, [messages, loading]);
+
+            const handleSend = async () => {
+                if(!input.trim()) return;
+                const userMsg = input;
+                setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+                setInput('');
+                setLoading(true);
+
+                // Mock AI Logic
+                setTimeout(() => {
+                    let reply = '';
+                    const q = userMsg.toLowerCase();
+                    const d = RESUME_DATA[lang];
+
+                    if (q.includes('school') || q.includes('学校') || q.includes('education') || q.includes('学历')) {
+                    reply = lang === 'zh' 
+                        ? `### 教育背景\n\n**${d.education[0].school}** (${d.education[0].year})\n${d.education[0].degree}\n> ${d.education[0].details}\n\n**${d.education[1].school}** (${d.education[1].year})\n${d.education[1].degree}\n> ${d.education[1].details}`
+                        : `### Education\n\n**${d.education[0].school}** (${d.education[0].year})\n${d.education[0].degree}\n> ${d.education[0].details}\n\n**${d.education[1].school}** (${d.education[1].year})\n${d.education[1].degree}\n> ${d.education[1].details}`;
+                    } else if (q.includes('work') || q.includes('job') || q.includes('experience') || q.includes('经历') || q.includes('公司')) {
+                    reply = lang === 'zh'
+                        ? `### 工作经历详细解读\n\n梅汉斌拥有两段重要的实习经历：\n\n1. **${d.experience[0].company}** (${d.experience[0].date})\n在此期间，他担任${d.experience[0].role}。主要成就包括：\n- 利用 SEMrush 完成市场调研与竞品分析。\n- 运营 YouTube 和 LinkedIn，使账号关注提升 350%。\n- 制作了 40+ 视频内容，显著提升了品牌曝光。\n\n2. **${d.experience[1].company}** (${d.experience[1].date})\n作为${d.experience[1].role}，他构建了 AI 驱动的翻译流程，大幅提升了文档翻译效率，并参与了跨部门的人才选拔协作。`
+                        : `### Work Experience Insights\n\nMei Hanbin has two significant internships:\n\n1. **${d.experience[0].company}** (${d.experience[0].date})\nAs a ${d.experience[0].role}, he conducted market research using SEMrush, managed social media (YouTube/LinkedIn) increasing followers by 350%, and produced over 40 videos.\n\n2. **${d.experience[1].company}** (${d.experience[1].date})\nAs a ${d.experience[1].role}, he designed an AI-driven translation workflow to improve efficiency and assisted in cross-departmental HR recruitment processes.`;
+                    } else if (q.includes('skill') || q.includes('技能') || q.includes('tool') || q.includes('工具')) {
+                        const skillList = d.skills.map(s => `- **${s.name}**: ${s.level}`).join('\n');
+                        reply = lang === 'zh'
+                        ? `### 核心技能树\n\n梅汉斌掌握了多元化的技能组合，特别是在 AI 应用和跨文化传播方面：\n\n${skillList}\n\n特别是他能够将 AI 工具（如 LLM Workflow）应用到实际工作中，这一点在现代市场营销中非常有价值。`
+                        : `### Core Skills\n\nMei Hanbin possesses a diverse skill set, especially in AI application and cross-cultural communication:\n\n${skillList}\n\nHis ability to apply AI tools (like LLM Workflows) to practical work is particularly valuable.`;
+                    } else {
+                    reply = lang === 'zh' 
+                        ? "作为一个模拟 AI，我通过分析简历发现梅汉斌是一位**复合型人才**。\n\n他不仅英语专业八级（语言能力强），还熟练掌握 Figma 设计、视频剪辑以及 AI 工作流搭建（技术应用能力强）。\n\n他的工作经历展示了极强的**执行力**和**跨界学习能力**，特别是在海外市场拓展方面成绩显著。\n\n你可以具体问我他的**教育**、**工作**或**技能**细节。" 
+                        : "As a mock AI, I analyze Mei Hanbin as a **versatile talent**.\n\nHe combines strong language skills (TEM-8) with technical proficiency in design (Figma), video editing, and AI workflows.\n\nHis experience demonstrates strong **execution** and **cross-disciplinary learning**, especially in overseas market expansion.\n\nYou can ask me specific details about his **education**, **work**, or **skills**.";
+                    }
+                    
+                    setMessages(prev => [...prev, { role: 'ai', text: reply }]);
+                    setLoading(false);
+                }, 1200);
+            };
+
+            return (
+                <div className="flex flex-col h-full bg-white dark:bg-[#1e1e1e]">
+                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
+                    {messages.map((m, i) => (
+                        <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 fade-in duration-300`}>
+                            <div className={`max-w-[90%] md:max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-7 shadow-sm ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none border border-gray-200 dark:border-gray-700'}`}>
+                                <div className="markdown-content" dangerouslySetInnerHTML={{ __html: marked.parse(m.text) }} />
+                            </div>
+                        </div>
+                    ))}
+                    {loading && (
+                        <div className="flex justify-start">
+                            <div className="bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-2xl rounded-bl-none flex gap-1.5 items-center border border-gray-200 dark:border-gray-700">
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                            </div>
+                        </div>
+                    )}
+                    </div>
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#252525]">
+                    <div className="relative">
+                        <input 
+                            type="text" 
+                            className="w-full bg-white dark:bg-[#333] border border-gray-300 dark:border-gray-600 rounded-full px-5 py-3 pr-12 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm text-gray-900 dark:text-white placeholder-gray-500"
+                            placeholder={lang === 'zh' ? "输入问题 (例如: 技能, 经历)..." : "Ask something (e.g., skills, experience)..."}
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleSend()}
+                        />
+                        <button 
+                            onClick={handleSend} 
+                            disabled={!input.trim()}
+                            className="absolute right-1.5 top-1.5 w-9 h-9 bg-blue-600 rounded-full text-white flex items-center justify-center hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <i className="ph-bold ph-paper-plane-right" />
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const APP_CONFIGS = [
+            { id: 'finder', title: 'Finder', icon: 'ph-smiley', color: 'bg-blue-500', component: Finder },
+            { id: 'safari', title: 'Safari', icon: 'ph-compass', color: 'bg-white text-blue-500', component: Safari },
+            { id: 'terminal', title: 'Terminal', icon: 'ph-terminal-window', color: 'bg-gray-800 text-white', component: Terminal },
+            { id: 'gemini', title: 'Gemini AI', icon: 'ph-sparkle', color: 'bg-purple-500 text-white', component: GeminiApp },
+            { id: 'mail', title: 'Mail', icon: 'ph-envelope', color: 'bg-blue-400 text-white', component: Mail },
+        ];
+
+        const MOBILE_APPS = [
+            { id: 'finder', title: '简历/Resume', icon: 'ph-user-list', color: 'bg-blue-500', component: Finder },
+            { id: 'safari', title: 'Safari', icon: 'ph-compass', color: 'bg-white text-blue-500', component: Safari },
+            { id: 'mail', title: 'Mail', icon: 'ph-envelope', color: 'bg-sky-400', component: Mail },
+            { id: 'gemini', title: 'Gemini', icon: 'ph-sparkle', color: 'bg-purple-600', component: GeminiApp },
+            { id: 'terminal', title: 'Terminal', icon: 'ph-terminal-window', color: 'bg-gray-800', component: Terminal },
+        ];
+
+        // --- 3. 桌面环境 (DesktopEnv) ---
+
+        const DesktopEnv = ({ lang, setLang, toggleTheme, isDark, onSwitchMode }) => {
+            const [windows, setWindows] = useState([]);
+            const [activeWindowId, setActiveWindowId] = useState(null);
+            const [zIndexCounter, setZIndexCounter] = useState(10);
+            const [time, setTime] = useState(new Date());
+
+            const [dragState, setDragState] = useState(null);
+
+            useEffect(() => {
+                const timer = setInterval(() => setTime(new Date()), 1000);
+                openWindow('finder');
+                return () => clearInterval(timer);
+            }, []);
+
+            const openWindow = (id) => {
+                setWindows(prev => {
+                    const existing = prev.find(w => w.id === id);
+                    if (existing) {
+                        if (existing.isMinimized) {
+                            return prev.map(w => w.id === id ? { ...w, isMinimized: false, zIndex: zIndexCounter + 1 } : w);
+                        }
+                        return prev.map(w => w.id === id ? { ...w, zIndex: zIndexCounter + 1 } : w);
+                    }
+                    const newZ = zIndexCounter + 1;
+                    setZIndexCounter(newZ);
+                    return [...prev, {
+                        id,
+                        isOpen: true,
+                        isMinimized: false,
+                        isMaximized: false,
+                        zIndex: newZ,
+                        position: { x: Math.max(20, 50 + prev.length * 30), y: Math.max(40, 50 + prev.length * 30) },
+                        size: { w: 900, h: 650 }
+                    }];
+                });
+                setActiveWindowId(id);
+            };
+
+            const closeWindow = (id) => {
+                setWindows(prev => prev.filter(w => w.id !== id));
+                if (activeWindowId === id) setActiveWindowId(null);
+            };
+
+            const minimizeWindow = (id) => {
+                setWindows(prev => prev.map(w => w.id === id ? { ...w, isMinimized: true } : w));
+                setActiveWindowId(null);
+            };
+
+            const toggleMaximizeWindow = (id) => {
+                setWindows(prev => prev.map(w => w.id === id ? { ...w, isMaximized: !w.isMaximized } : w));
+            };
+
+            const focusWindow = (id) => {
+                if (activeWindowId === id) return;
+                const newZ = zIndexCounter + 1;
+                setZIndexCounter(newZ);
+                setWindows(prev => prev.map(w => w.id === id ? { ...w, zIndex: newZ } : w));
+                setActiveWindowId(id);
+            };
+
+            const handleMouseDown = (e, id, win, type, direction) => {
+                if (win.isMaximized) return; 
+                if (type === 'move' && e.target.closest('.window-controls')) return; 
+
+                e.preventDefault();
+                e.stopPropagation();
+                focusWindow(id);
+
+                setDragState({
+                    type,
+                    id,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    initialLeft: win.position.x,
+                    initialTop: win.position.y,
+                    initialWidth: win.size.w,
+                    initialHeight: win.size.h,
+                    direction
+                });
+            };
+
+            const handleMouseMove = (e) => {
+                if (!dragState) return;
+                e.preventDefault();
+                
+                const deltaX = e.clientX - dragState.startX;
+                const deltaY = e.clientY - dragState.startY;
+
+                setWindows(prev => prev.map(w => {
+                    if (w.id === dragState.id) {
+                        if (dragState.type === 'move') {
+                            return {
+                                ...w,
+                                position: {
+                                    x: dragState.initialLeft + deltaX,
+                                    y: dragState.initialTop + deltaY
+                                }
+                            };
+                        } else if (dragState.type === 'resize') {
+                            let newW = dragState.initialWidth;
+                            let newH = dragState.initialHeight;
+                            let newX = dragState.initialLeft;
+                            let newY = dragState.initialTop;
+
+                            if (dragState.direction?.includes('e')) newW = Math.max(400, dragState.initialWidth + deltaX);
+                            if (dragState.direction?.includes('s')) newH = Math.max(300, dragState.initialHeight + deltaY);
+                            if (dragState.direction?.includes('w')) {
+                                const proposedWidth = dragState.initialWidth - deltaX;
+                                if (proposedWidth > 400) {
+                                    newW = proposedWidth;
+                                    newX = dragState.initialLeft + deltaX;
+                                }
+                            }
+                            if (dragState.direction?.includes('n')) {
+                                const proposedHeight = dragState.initialHeight - deltaY;
+                                if (proposedHeight > 300) {
+                                    newH = proposedHeight;
+                                    newY = dragState.initialTop + deltaY;
+                                }
+                            }
+
+                            return {
+                                ...w,
+                                position: { x: newX, y: newY },
+                                size: { w: newW, h: newH }
+                            };
+                        }
+                    }
+                    return w;
+                }));
+            };
+
+            const handleMouseUp = () => {
+                setDragState(null);
+            };
+
+            return (
+                <div 
+                    className="absolute inset-0 w-full h-full bg-cover bg-center overflow-hidden transition-all duration-700 ease-spring"
+                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80')` }}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                >
+                    {/* Mac Menu Bar */}
+                    <div className={`h-8 w-full backdrop-blur-md border-b flex items-center justify-between px-4 text-sm font-medium z-[9999] select-none shadow-sm transition-colors duration-300
+                        ${isDark 
+                        ? 'bg-gray-900/60 border-white/10 text-gray-100' 
+                        : 'bg-white/60 border-black/5 text-gray-900'
+                        }`}>
+                        <div className="flex items-center gap-5">
+                        <i className="ph-fill ph-apple-logo text-lg" />
+                        <span className="font-bold hidden sm:block">MeiOS</span>
+                        {['File', 'Edit', 'View', 'Go', 'Window', 'Help'].map(m => (
+                            <span key={m} className="hidden sm:block cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 px-2 py-0.5 rounded transition-colors">{m}</span>
+                        ))}
+                        </div>
+                        <div className="flex items-center gap-4">
+                        <button onClick={onSwitchMode} className="hover:bg-black/5 dark:hover:bg-white/10 px-2 py-0.5 rounded flex items-center gap-2 transition-colors" title="Switch to iPhone">
+                            <i className="ph ph-device-mobile text-lg" />
+                            <span className="text-xs font-semibold hidden sm:inline">Mobile View</span>
+                        </button>
+                        <button onClick={toggleTheme} className="hover:bg-black/5 dark:hover:bg-white/10 px-2 py-0.5 rounded flex items-center gap-2 transition-colors">
+                            <i className={isDark ? "ph-fill ph-sun text-yellow-300" : "ph-fill ph-moon"} />
+                            <span className="text-xs hidden sm:inline">Theme</span>
+                        </button>
+                        <button onClick={() => setLang(lang === 'en' ? 'zh' : 'en')} className="flex items-center gap-2 text-xs font-bold border border-current px-1 rounded hover:opacity-70 transition-opacity">
+                            <span>{lang === 'en' ? 'EN' : '中'}</span>
+                        </button>
+                        <div className="flex items-center gap-3 pl-2 border-l border-current opacity-60">
+                            <i className="ph-fill ph-wifi-high text-lg" />
+                            <i className="ph ph-magnifying-glass text-lg" />
+                            <i className="ph-fill ph-control text-lg" />
+                            <span className="mr-2 font-semibold min-w-[60px] text-center">{time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        </div>
+                    </div>
+
+                    {/* Desktop Area / Windows */}
+                    <div className="relative w-full h-[calc(100%-80px)] p-4">
+                        {/* Desktop Icons */}
+                        <div className="absolute right-4 top-12 flex flex-col gap-6 items-center w-24 select-none z-0">
+                            <div className="flex flex-col items-center group cursor-pointer" onDoubleClick={() => openWindow('finder')}>
+                                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg mb-1 group-hover:scale-105 transition-transform border border-white/20">
+                                    <i className="ph-fill ph-user-list text-white text-3xl" />
+                                </div>
+                                <span className="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded-full">{lang === 'zh' ? '我的简历' : 'Resume'}</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center group cursor-pointer" onDoubleClick={() => openWindow('safari')}>
+                                <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg mb-1 group-hover:scale-105 transition-transform">
+                                    <i className="ph-fill ph-globe text-blue-500 text-4xl" />
+                                </div>
+                                <span className="text-white text-xs font-medium drop-shadow-md bg-black/30 px-2 py-0.5 rounded-full">Website</span>
+                            </div>
+                        </div>
+
+                        {/* Windows */}
+                        {windows.map(win => {
+                            if (win.isMinimized) return null;
+                            const config = APP_CONFIGS.find(c => c.id === win.id);
+                            if (!config) return null;
+                            const Component = config.component;
+                            const isDragging = dragState?.id === win.id;
+
+                            return (
+                                <div
+                                key={win.id}
+                                className={`absolute rounded-xl overflow-hidden shadow-2xl border flex flex-col 
+                                    ${isDragging ? 'transition-none' : 'transition-all duration-300 ease-spring'} 
+                                    ${win.isMaximized ? 'inset-0 m-0 !top-0 !left-0 !w-full !h-full !rounded-none z-[50]' : ''}
+                                    ${isDark ? 'border-gray-700 shadow-black/50' : 'border-white/40 shadow-xl'}`}
+                                style={!win.isMaximized ? {
+                                    width: win.size.w,
+                                    height: win.size.h,
+                                    left: win.position.x,
+                                    top: win.position.y,
+                                    zIndex: win.zIndex,
+                                    opacity: win.isOpen ? 1 : 0,
+                                    transform: win.isOpen ? 'scale(1)' : 'scale(0.95)',
+                                } : { zIndex: win.zIndex }}
+                                onMouseDown={() => focusWindow(win.id)}
+                                >
+                                {!win.isMaximized && (
+                                    <>
+                                    <div className="absolute top-0 left-0 w-full h-1 cursor-n-resize z-50" onMouseDown={(e) => handleMouseDown(e, win.id, win, 'resize', 'n')} />
+                                    <div className="absolute bottom-0 left-0 w-full h-1 cursor-s-resize z-50" onMouseDown={(e) => handleMouseDown(e, win.id, win, 'resize', 's')} />
+                                    <div className="absolute top-0 left-0 w-1 h-full cursor-w-resize z-50" onMouseDown={(e) => handleMouseDown(e, win.id, win, 'resize', 'w')} />
+                                    <div className="absolute top-0 right-0 w-1 h-full cursor-e-resize z-50" onMouseDown={(e) => handleMouseDown(e, win.id, win, 'resize', 'e')} />
+                                    <div className="absolute bottom-right-0 w-4 h-4 cursor-se-resize z-50 right-0 bottom-0" onMouseDown={(e) => handleMouseDown(e, win.id, win, 'resize', 'se')} />
+                                    </>
+                                )}
+
+                                {/* Window Header */}
+                                <div 
+                                    className={`h-9 flex items-center px-4 relative border-b select-none cursor-default transition-colors duration-300
+                                        ${isDark ? 'bg-[#2c2c2c] border-black text-gray-300' : 'bg-[#f0f0f0] border-gray-300 text-gray-600'}`}
+                                    onMouseDown={(e) => handleMouseDown(e, win.id, win, 'move')}
+                                    onDoubleClick={() => toggleMaximizeWindow(win.id)}
+                                >
+                                    <div className="flex gap-2 group absolute left-4 window-controls z-10">
+                                    <div onClick={(e) => { e.stopPropagation(); closeWindow(win.id); }} className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e] cursor-pointer flex items-center justify-center text-[8px] text-transparent hover:text-black/50 transition-colors"><i className="ph-bold ph-x" /></div>
+                                    <div onClick={(e) => { e.stopPropagation(); minimizeWindow(win.id); }} className="w-3 h-3 rounded-full bg-[#febc2e] border border-[#d89e24] cursor-pointer flex items-center justify-center text-[8px] text-transparent hover:text-black/50 transition-colors"><i className="ph-bold ph-minus" /></div>
+                                    <div onClick={(e) => { e.stopPropagation(); toggleMaximizeWindow(win.id); }} className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29] cursor-pointer flex items-center justify-center text-[8px] text-transparent hover:text-black/50 transition-colors"><i className={`ph-bold ${win.isMaximized ? 'ph-arrows-in-simple' : 'ph-arrows-out-simple'}`} /></div>
+                                    </div>
+                                    <div className="w-full text-center text-sm font-semibold flex items-center justify-center gap-2 pointer-events-none">
+                                        <i className={`${config.icon} ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                                        {config.title}
+                                    </div>
+                                </div>
+                                
+                                <div className="flex-1 bg-white dark:bg-[#1e1e1e] relative overflow-hidden flex flex-col">
+                                    {dragState && <div className="absolute inset-0 z-50 bg-transparent" />}
+                                    <Component lang={lang} isDark={isDark} />
+                                </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Dock */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[10000]">
+                        <div className={`backdrop-blur-xl border px-4 py-3 rounded-2xl flex items-end gap-3 shadow-2xl transform transition-transform duration-300 hover:scale-105
+                        ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/40 border-white/20'}`}>
+                        {APP_CONFIGS.map(app => (
+                            <div key={app.id} className="relative group flex flex-col items-center">
+                            <button 
+                                onClick={() => openWindow(app.id)}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-lg hover:-translate-y-4 hover:scale-110 transition-all duration-300 ease-spring ${app.color} ${app.id === 'safari' ? 'border border-gray-200' : 'border border-transparent'}`}
+                            >
+                                {app.id === 'safari' ? (
+                                    <i className="ph-fill ph-compass text-blue-500 text-3xl" />
+                                ) : (
+                                    <i className={`${app.icon} ${app.id === 'terminal' || app.id === 'gemini' || app.id === 'mail' ? 'text-white' : 'text-white'}`} />
+                                )}
+                            </button>
+                            {/* Active Dot */}
+                            {windows.find(w => w.id === app.id) && (
+                                <div className={`w-1 h-1 rounded-full absolute -bottom-2 ${isDark ? 'bg-white' : 'bg-gray-800'}`} />
+                            )}
+                            {/* Tooltip */}
+                            <div className="absolute -top-12 bg-gray-900/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl backdrop-blur-sm border border-white/10">
+                                {app.title}
+                            </div>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 4. 移动端环境 (MobileEnv) ---
+
+        const AppIcon = ({ app, inDock = false, isDark, onClick }) => (
+            <div className="flex flex-col items-center gap-1.5 cursor-pointer group" onClick={() => onClick(app.id)}>
+                <div className={`w-[60px] h-[60px] rounded-[14px] flex items-center justify-center text-3xl shadow-md active:scale-90 transition-transform duration-200 ease-ios ${app.color}`}>
+                <i className={`${app.icon} ${app.id === 'safari' || app.color.includes('bg-white') || app.color.includes('bg-gray-300') || app.color.includes('bg-green-100') || app.color.includes('bg-yellow-100') ? '' : 'text-white'}`} />
+                </div>
+                {!inDock && (
+                <span className={`text-[11px] font-medium tracking-tight group-hover:opacity-80 transition-colors duration-300 
+                    ${isDark ? 'text-white drop-shadow-md' : 'text-black font-semibold'}`}>
+                    {app.title}
+                </span>
+                )}
+            </div>
+        );
+
+        const MobileEnv = ({ lang, setLang, toggleTheme, isDark, onSwitchMode }) => {
+            const [openApp, setOpenApp] = useState(null);
+            const [time, setTime] = useState(new Date());
+
+            useEffect(() => {
+                const timer = setInterval(() => setTime(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const handleAppClick = (id) => {
+                setOpenApp(id);
+            };
+
+            const activeAppConfig = MOBILE_APPS.find(a => a.id === openApp);
+            const ActiveComponent = activeAppConfig?.component;
+
+            return (
+                <div className="absolute inset-0 w-full h-full bg-black overflow-hidden flex justify-center items-center font-sans">
+                <div className={`relative w-full h-full bg-cover bg-center overflow-hidden transition-colors duration-500
+                    ${isDark ? 'bg-[#000]' : 'bg-[#fff]'}`}
+                    style={!isDark ? { backgroundImage: `url('https://images.unsplash.com/photo-1597836888466-261f94348575?ixlib=rb-4.0.3&auto=format&fit=crop&w=1887&q=80')` } : {}}
+                >
+                    {isDark && (
+                        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black z-0" />
+                    )}
+                    
+                    {/* iOS Status Bar */}
+                    <div className={`h-[44px] w-full flex justify-between items-center px-6 z-50 absolute top-0 left-0 transition-colors duration-300
+                        ${openApp ? (isDark ? 'bg-black/90 text-white' : 'bg-white/90 text-black') : (isDark ? 'text-white' : 'text-black')}`}>
+                        
+                        <div className="font-semibold text-[13px] w-14 tracking-wide text-center whitespace-nowrap">
+                        {time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 w-16 justify-end">
+                        <i className="ph-fill ph-cell-signal-full text-[16px]" />
+                        <i className="ph-fill ph-wifi-high text-[16px]" />
+                        <div className={`relative w-[22px] h-[11px] border rounded-[3px] ${isDark || openApp ? (isDark ? 'border-white/40' : 'border-black/40') : 'border-black/40'}`}>
+                            <div className={`absolute top-[1px] left-[1px] bottom-[1px] w-[14px] rounded-[1px] ${isDark || openApp ? (isDark ? 'bg-white' : 'bg-black') : 'bg-black'}`} />
+                            <div className={`absolute -right-[3px] top-[3px] h-[4px] w-[2px] rounded-r-[1px] ${isDark || openApp ? (isDark ? 'bg-white/40' : 'bg-black/40') : 'bg-black/40'}`} />
+                        </div>
+                        </div>
+                    </div>
+
+                    {!openApp && (
+                        <button 
+                        onClick={onSwitchMode}
+                        className={`absolute top-14 right-6 z-40 backdrop-blur-lg border rounded-full p-2 transition active:scale-95 shadow-lg
+                            ${isDark ? 'bg-white/10 border-white/20 text-white hover:bg-white/20' : 'bg-black/10 border-black/10 text-black hover:bg-black/20'}`}
+                        title="Switch to Desktop"
+                        >
+                        <i className="ph ph-monitor text-xl" />
+                        </button>
+                    )}
+
+                    {/* Home Screen */}
+                    <div className={`pt-20 px-6 grid grid-cols-4 gap-x-5 gap-y-7 content-start h-full transition-all duration-500 ease-ios z-10 relative ${openApp ? 'scale-90 opacity-0 pointer-events-none blur-sm' : 'scale-100 opacity-100 blur-0'}`}>
+                        <div onClick={toggleTheme} className="flex flex-col items-center gap-1.5 cursor-pointer group">
+                        <div className={`w-[60px] h-[60px] rounded-[14px] flex items-center justify-center text-3xl shadow-md active:scale-90 transition-transform duration-200 ease-ios bg-gray-500 text-white border border-white/10`}>
+                            <i className={isDark ? "ph-fill ph-sun" : "ph-fill ph-moon"} />
+                        </div>
+                        <span className={`text-[11px] font-medium tracking-tight group-hover:opacity-80 transition-colors duration-300 ${isDark ? 'text-white drop-shadow-md' : 'text-black font-semibold'}`}>
+                            Theme
+                        </span>
+                        </div>
+
+                        <div onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')} className="flex flex-col items-center gap-1.5 cursor-pointer group">
+                        <div className="w-[60px] h-[60px] rounded-[14px] flex items-center justify-center text-xl font-bold bg-gray-500/80 backdrop-blur text-white shadow-md active:scale-90 transition-transform border border-white/10">
+                            {lang === 'zh' ? 'CN' : 'EN'}
+                        </div>
+                        <span className={`text-[11px] font-medium tracking-tight group-hover:opacity-80 transition-colors duration-300 ${isDark ? 'text-white drop-shadow-md' : 'text-black font-semibold'}`}>
+                            Language
+                        </span>
+                        </div>
+                    </div>
+
+                    {/* Mobile Dock */}
+                    <div className={`absolute bottom-6 left-4 right-4 h-[85px] rounded-[30px] flex items-center justify-around px-2 transition-transform duration-500 ease-ios z-10
+                        ${isDark ? 'bg-black/40 backdrop-blur-[30px] border border-white/5' : 'bg-white/40 backdrop-blur-[30px] border border-white/20'}
+                        ${openApp ? 'translate-y-[120px]' : 'translate-y-0'}`}>
+                        {MOBILE_APPS.map(app => (
+                        <AppIcon key={app.id} app={app} inDock isDark={isDark} onClick={handleAppClick} />
+                        ))}
+                    </div>
+
+                    {/* Opened App View */}
+                    <div className={`absolute inset-0 z-40 transition-all duration-500 ease-ios flex flex-col 
+                        ${openApp ? 'translate-y-0 rounded-none scale-100' : 'translate-y-full rounded-t-[40px] scale-95'}
+                        ${isDark ? 'bg-black' : 'bg-[#f2f2f7]'}`}>
+                        {openApp && (
+                        <div className="flex-1 flex flex-col pt-[44px] relative overflow-hidden">
+                            <div className={`h-10 px-4 flex items-center justify-between border-b z-10 shrink-0 transition-colors duration-300
+                                ${isDark ? 'bg-[#1c1c1e] border-gray-800' : 'bg-white border-gray-200'}`}>
+                                <button onClick={() => setOpenApp(null)} className="flex items-center text-blue-500 gap-1 text-[15px] active:opacity-50">
+                                    <i className="ph-bold ph-caret-left" />
+                                    Back
+                                </button>
+                                <span className={`font-semibold text-[15px] ${isDark ? 'text-white' : 'text-black'}`}>{MOBILE_APPS.find(a => a.id === openApp)?.title}</span>
+                                <div className="w-8" />
+                            </div>
+                            
+                            <div className={`flex-1 overflow-y-auto ${isDark ? 'bg-black' : 'bg-white'}`}>
+                                {ActiveComponent && <ActiveComponent lang={lang} isDark={isDark} />}
+                            </div>
+
+                            <div className="h-8 w-full flex justify-center items-end pb-2 bg-transparent absolute bottom-0 left-0 z-50 cursor-pointer pointer-events-auto" onClick={() => setOpenApp(null)}>
+                                <div className={`w-[130px] h-[5px] rounded-full transition-colors ${isDark ? 'bg-white/20 hover:bg-white/40' : 'bg-black/20 hover:bg-black/40'}`} />
+                            </div>
+                        </div>
+                        )}
+                    </div>
+
+                </div>
+                </div>
+            );
+        };
+
+        // --- 5. 主程序 (App) ---
+
+        const App = () => {
+            const [mode, setMode] = useState('desktop');
+            const [lang, setLang] = useState('zh');
+            const [isDark, setIsDark] = useState(false);
+            const [isTransitioning, setIsTransitioning] = useState(false);
+
+            useEffect(() => {
+                const checkMobile = () => {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                const isMobileDevice = /android|ipad|iphone|ipod/i.test(userAgent.toLowerCase());
+                const isSmallScreen = window.innerWidth < 768;
+                
+                if (isMobileDevice || isSmallScreen) {
+                    setMode('mobile');
+                } else {
+                    setMode('desktop');
+                }
+                };
+                checkMobile();
+            }, []);
+
+            const handleSwitch = () => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                setMode(prev => prev === 'desktop' ? 'mobile' : 'desktop');
+                setTimeout(() => setIsTransitioning(false), 50);
+                }, 400); 
+            };
+
+            const toggleTheme = () => {
+                setIsDark(!isDark);
+                if (!isDark) {
+                document.documentElement.classList.add('dark');
+                } else {
+                document.documentElement.classList.remove('dark');
+                }
+            };
+
+            return (
+                <div className={`relative w-screen h-screen overflow-hidden bg-black text-gray-900 dark:text-gray-100`}>
+                
+                <div className={`absolute inset-0 transition-all duration-700 ease-spring transform origin-center
+                    ${mode === 'desktop' ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-90 pointer-events-none'}`}>
+                    <DesktopEnv 
+                        lang={lang} 
+                        setLang={setLang} 
+                        isDark={isDark} 
+                        toggleTheme={toggleTheme} 
+                        onSwitchMode={handleSwitch}
+                    />
+                </div>
+
+                <div className={`absolute inset-0 transition-all duration-700 ease-spring transform origin-center
+                    ${mode === 'mobile' ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-110 pointer-events-none'}`}>
+                    <MobileEnv 
+                        lang={lang} 
+                        setLang={setLang} 
+                        isDark={isDark} 
+                        toggleTheme={toggleTheme} 
+                        onSwitchMode={handleSwitch}
+                    />
+                </div>
+                
+                <div className={`absolute inset-0 bg-black pointer-events-none transition-opacity duration-300 ${isTransitioning ? 'opacity-20' : 'opacity-0'}`} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
